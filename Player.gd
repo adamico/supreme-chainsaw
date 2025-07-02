@@ -46,20 +46,8 @@ func _physics_process(delta):
 	move_and_slide()
 
 func _handle_input():
-	# Get movement input
-	input_vector = Vector2.ZERO
-	
-	if Input.is_action_pressed("move_left"):
-		input_vector.x -= 1
-	if Input.is_action_pressed("move_right"):
-		input_vector.x += 1
-	if Input.is_action_pressed("move_up"):
-		input_vector.y -= 1
-	if Input.is_action_pressed("move_down"):
-		input_vector.y += 1
-	
-	# Normalize diagonal movement
-	input_vector = input_vector.normalized()
+	# Get movement input using Input.get_vector() for automatic normalization
+	input_vector = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	
 	# Handle interact action
 	if Input.is_action_just_pressed("interact"):
