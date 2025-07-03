@@ -142,9 +142,6 @@ func _play_animation(animation_name: String):
 	if animation_player and animation_player.has_animation(animation_name):
 		if animation_player.current_animation != animation_name:
 			animation_player.play(animation_name)
-	else:
-		# Fallback: just print the animation name if no AnimationPlayer
-		print("Playing animation: ", animation_name)
 
 func _perform_interact():
 	# Perform interact action
