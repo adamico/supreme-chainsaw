@@ -1,0 +1,104 @@
+---
+name: Godot CI
+
+# Trigger the workflow on push to main branch and pull requests targeting main
+"on":
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Environment variables for easy customization
+env:
+  GODOT_VERSION: 4.4.1  # Godot version to use (can be customized)
+  EXPORT_NAME: supreme-chainsaw  # Name of the exported project
+
+jobs:
+  export-game:
+    # Use Ubuntu as the runner environment
+    runs-on: ubuntu-latest
+
+    # Job name for better identification in the GitHub Actions UI
+    name: Export Game
+
+    # Use matrix strategy to run each export in parallel, avoiding template conflicts
+    strategy:
+      matrix:
+        platform:
+          - name: Linux/X11
+            directory: linux
+          - name: Windows Desktop
+            directory: windows
+          - name: macOS
+            directory: macos
+          - name: Web
+            directory: web
+
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          lfs: true  # Enable Git LFS support for large assets
+
+      # Step 2: Create build directory structure
+      - name: Create build directory
+        run: mkdir -p build/${{ matrix.platform.directory }}
+
+      # Step 3: Export for the current platform
+      - name: Build for ${{ matrix.platform.name }}
+        id: export
+        uses: firebelley/godot-export@v5.2.0
+        with:
+          # Godot version to use for export
+          godot_executable_download_url: https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_linux.x86_64.zip
+          godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz
+          # Path to the project directory (current directory)
+          relative_project_path: ./
+          # Export preset name (must match the name in export_presets.cfg)
+          export_preset_name: ${{ matrix.platform.name }}
+          # Use cache to speed up builds
+          cache: true
+
+      # Step 4: Upload build as workflow artifact
+      - name: Upload ${{ matrix.platform.name }} Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform.directory }}-build
+          path: ${{ steps.export.outputs.build_directory }}
+          if-no-files-found: error
+
+  # Additional job for customizable exports (can be enabled by setting custom
+  # export targets)
+  custom-export:
+    runs-on: ubuntu-latest
+    name: Custom Export (Optional)
+    # This job is disabled by default - enable by setting ENABLE_CUSTOM_EXPORT
+    # to true
+    if: ${{ vars.ENABLE_CUSTOM_EXPORT == 'true' }}
+
+    strategy:
+      matrix:
+        # Customize these export targets as needed
+        export_preset: >-
+          ${{ fromJson(vars.CUSTOM_EXPORT_TARGETS || '["Linux/X11"]') }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Export Custom Target
+        uses: firebelley/godot-export@v5.2.0
+        with:
+          godot_executable_download_url: https://github.com/godotengine/godot/releases/download/${{ vars.CUSTOM_GODOT_VERSION || env.GODOT_VERSION }}-stable/Godot_v${{ vars.CUSTOM_GODOT_VERSION || env.GODOT_VERSION }}-stable_linux.x86_64.zip
+          godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/${{ vars.CUSTOM_GODOT_VERSION || env.GODOT_VERSION }}-stable/Godot_v${{ vars.CUSTOM_GODOT_VERSION || env.GODOT_VERSION }}-stable_export_templates.tpz
+          relative_project_path: ./
+          export_preset_name: ${{ matrix.export_preset }}
+
+      - name: Upload Custom Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: custom-${{ matrix.export_preset }}-build
+          path: build/
