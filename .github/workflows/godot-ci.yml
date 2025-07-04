@@ -10,7 +10,7 @@ name: Godot CI
 
 # Environment variables for easy customization
 env:
-  GODOT_VERSION: 4.3  # Godot version to use (can be customized)
+  GODOT_VERSION: 4.4.1  # Godot version to use (can be customized)
   EXPORT_NAME: supreme-chainsaw  # Name of the exported project
 
 jobs:
