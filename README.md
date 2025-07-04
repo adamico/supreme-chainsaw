@@ -30,7 +30,8 @@ A 2D player controller for Godot 4 with movement, interaction, and state managem
 - `project.godot` - Main project configuration with input mappings
 - `Player.gd` - Main player controller script
 - `Player.tscn` - Player scene with CharacterBody2D, Sprite2D, CollisionShape2D, and AnimationPlayer
-- `Main.tscn` - Example scene with player positioned in center
+- `Room.tscn` - Room scene with TilemapLayer root containing the player
+- `Main.tscn` - Main scene that loads the Room scene
 
 ## Input Mappings
 
