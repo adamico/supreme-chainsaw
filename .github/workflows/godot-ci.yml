@@ -1,11 +1,12 @@
+---
 name: Godot CI
 
 # Trigger the workflow on push to main branch and pull requests targeting main
-on:
+"on":
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 # Environment variables for easy customization
 env:
@@ -16,128 +17,163 @@ jobs:
   export-game:
     # Use Ubuntu as the runner environment
     runs-on: ubuntu-latest
-    
+
     # Job name for better identification in the GitHub Actions UI
     name: Export Game
-    
-    steps:
-    # Step 1: Checkout the repository code
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        lfs: true  # Enable Git LFS support for large assets
-    
-    # Step 2: Create build directory structure
-    - name: Create build directory
-      run: |
-        mkdir -p build/linux
-        mkdir -p build/windows
-        mkdir -p build/macos
-        mkdir -p build/web
-    
-    # Step 3: Export for Linux
-    - name: Build for Linux
-      id: linux
-      uses: firebelley/godot-export@v5.2.0
-      with:
-        # Godot version to use for export
-        godot_executable_download_url: https://downloads.tuxfamily.org/godotengine/${{ env.GODOT_VERSION }}/Godot_v${{ env.GODOT_VERSION }}-stable_linux.x86_64.zip
-        godot_export_templates_download_url: https://downloads.tuxfamily.org/godotengine/${{ env.GODOT_VERSION }}/Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz
-        # Path to the project directory (current directory)
-        relative_project_path: ./
-        # Export preset name (must match the name in export_presets.cfg)
-        export_preset_name: Linux/X11
-    
-    # Step 4: Export for Windows
-    - name: Build for Windows  
-      id: windows
-      uses: firebelley/godot-export@v5.2.0
-      with:
-        godot_executable_download_url: https://downloads.tuxfamily.org/godotengine/${{ env.GODOT_VERSION }}/Godot_v${{ env.GODOT_VERSION }}-stable_linux.x86_64.zip
-        godot_export_templates_download_url: https://downloads.tuxfamily.org/godotengine/${{ env.GODOT_VERSION }}/Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz
-        relative_project_path: ./
-        export_preset_name: Windows Desktop
-    
-    # Step 5: Export for macOS
-    - name: Build for macOS
-      id: macos
-      uses: firebelley/godot-export@v5.2.0
-      with:
-        godot_executable_download_url: https://downloads.tuxfamily.org/godotengine/${{ env.GODOT_VERSION }}/Godot_v${{ env.GODOT_VERSION }}-stable_linux.x86_64.zip
-        godot_export_templates_download_url: https://downloads.tuxfamily.org/godotengine/${{ env.GODOT_VERSION }}/Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz
-        relative_project_path: ./
-        export_preset_name: macOS
-    
-    # Step 6: Export for Web (HTML5)
-    - name: Build for Web
-      id: web
-      uses: firebelley/godot-export@v5.2.0
-      with:
-        godot_executable_download_url: https://downloads.tuxfamily.org/godotengine/${{ env.GODOT_VERSION }}/Godot_v${{ env.GODOT_VERSION }}-stable_linux.x86_64.zip
-        godot_export_templates_download_url: https://downloads.tuxfamily.org/godotengine/${{ env.GODOT_VERSION }}/Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz
-        relative_project_path: ./
-        export_preset_name: Web
-    
-    # Step 7: Upload Linux build as workflow artifact
-    - name: Upload Linux Build
-      uses: actions/upload-artifact@v4
-      with:
-        name: linux-build
-        path: build/linux/
-        if-no-files-found: error
-    
-    # Step 8: Upload Windows build as workflow artifact  
-    - name: Upload Windows Build
-      uses: actions/upload-artifact@v4
-      with:
-        name: windows-build
-        path: build/windows/
-        if-no-files-found: error
-    
-    # Step 9: Upload macOS build as workflow artifact
-    - name: Upload macOS Build
-      uses: actions/upload-artifact@v4
-      with:
-        name: macos-build
-        path: build/macos/
-        if-no-files-found: error
-    
-    # Step 10: Upload Web build as workflow artifact
-    - name: Upload Web Build
-      uses: actions/upload-artifact@v4
-      with:
-        name: web-build
-        path: build/web/
-        if-no-files-found: error
 
-# Additional job for customizable exports (can be enabled by setting custom export targets)
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          lfs: true  # Enable Git LFS support for large assets
+
+      # Step 2: Create build directory structure
+      - name: Create build directory
+        run: |
+          mkdir -p build/linux
+          mkdir -p build/windows
+          mkdir -p build/macos
+          mkdir -p build/web
+
+      # Step 3: Export for Linux
+      - name: Build for Linux
+        id: linux
+        uses: firebelley/godot-export@v5.2.0
+        with:
+          # Godot version to use for export
+          godot_executable_download_url: >-
+            https://downloads.tuxfamily.org/godotengine/
+            ${{ env.GODOT_VERSION }}/
+            Godot_v${{ env.GODOT_VERSION }}-stable_linux.x86_64.zip
+          godot_export_templates_download_url: >-
+            https://downloads.tuxfamily.org/godotengine/
+            ${{ env.GODOT_VERSION }}/
+            Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz
+          # Path to the project directory (current directory)
+          relative_project_path: ./
+          # Export preset name (must match the name in export_presets.cfg)
+          export_preset_name: Linux/X11
+
+      # Step 4: Export for Windows
+      - name: Build for Windows
+        id: windows
+        uses: firebelley/godot-export@v5.2.0
+        with:
+          godot_executable_download_url: >-
+            https://downloads.tuxfamily.org/godotengine/
+            ${{ env.GODOT_VERSION }}/
+            Godot_v${{ env.GODOT_VERSION }}-stable_linux.x86_64.zip
+          godot_export_templates_download_url: >-
+            https://downloads.tuxfamily.org/godotengine/
+            ${{ env.GODOT_VERSION }}/
+            Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz
+          relative_project_path: ./
+          export_preset_name: Windows Desktop
+
+      # Step 5: Export for macOS
+      - name: Build for macOS
+        id: macos
+        uses: firebelley/godot-export@v5.2.0
+        with:
+          godot_executable_download_url: >-
+            https://downloads.tuxfamily.org/godotengine/
+            ${{ env.GODOT_VERSION }}/
+            Godot_v${{ env.GODOT_VERSION }}-stable_linux.x86_64.zip
+          godot_export_templates_download_url: >-
+            https://downloads.tuxfamily.org/godotengine/
+            ${{ env.GODOT_VERSION }}/
+            Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz
+          relative_project_path: ./
+          export_preset_name: macOS
+
+      # Step 6: Export for Web (HTML5)
+      - name: Build for Web
+        id: web
+        uses: firebelley/godot-export@v5.2.0
+        with:
+          godot_executable_download_url: >-
+            https://downloads.tuxfamily.org/godotengine/
+            ${{ env.GODOT_VERSION }}/
+            Godot_v${{ env.GODOT_VERSION }}-stable_linux.x86_64.zip
+          godot_export_templates_download_url: >-
+            https://downloads.tuxfamily.org/godotengine/
+            ${{ env.GODOT_VERSION }}/
+            Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz
+          relative_project_path: ./
+          export_preset_name: Web
+
+      # Step 7: Upload Linux build as workflow artifact
+      - name: Upload Linux Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-build
+          path: build/linux/
+          if-no-files-found: error
+
+      # Step 8: Upload Windows build as workflow artifact
+      - name: Upload Windows Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: build/windows/
+          if-no-files-found: error
+
+      # Step 9: Upload macOS build as workflow artifact
+      - name: Upload macOS Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-build
+          path: build/macos/
+          if-no-files-found: error
+
+      # Step 10: Upload Web build as workflow artifact
+      - name: Upload Web Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: build/web/
+          if-no-files-found: error
+
+  # Additional job for customizable exports (can be enabled by setting custom
+  # export targets)
   custom-export:
     runs-on: ubuntu-latest
     name: Custom Export (Optional)
-    # This job is disabled by default - enable by setting ENABLE_CUSTOM_EXPORT to true
+    # This job is disabled by default - enable by setting ENABLE_CUSTOM_EXPORT
+    # to true
     if: ${{ vars.ENABLE_CUSTOM_EXPORT == 'true' }}
-    
+
     strategy:
       matrix:
         # Customize these export targets as needed
-        export_preset: ${{ fromJson(vars.CUSTOM_EXPORT_TARGETS || '["Linux/X11"]') }}
-    
+        export_preset: >-
+          ${{ fromJson(vars.CUSTOM_EXPORT_TARGETS || '["Linux/X11"]') }}
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        lfs: true
-    
-    - name: Export Custom Target
-      uses: firebelley/godot-export@v5.2.0
-      with:
-        godot_executable_download_url: https://downloads.tuxfamily.org/godotengine/${{ vars.CUSTOM_GODOT_VERSION || env.GODOT_VERSION }}/Godot_v${{ vars.CUSTOM_GODOT_VERSION || env.GODOT_VERSION }}-stable_linux.x86_64.zip
-        godot_export_templates_download_url: https://downloads.tuxfamily.org/godotengine/${{ vars.CUSTOM_GODOT_VERSION || env.GODOT_VERSION }}/Godot_v${{ vars.CUSTOM_GODOT_VERSION || env.GODOT_VERSION }}-stable_export_templates.tpz
-        relative_project_path: ./
-        export_preset_name: ${{ matrix.export_preset }}
-    
-    - name: Upload Custom Build
-      uses: actions/upload-artifact@v4
-      with:
-        name: custom-${{ matrix.export_preset }}-build
-        path: build/
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Export Custom Target
+        uses: firebelley/godot-export@v5.2.0
+        with:
+          godot_executable_download_url: >-
+            https://downloads.tuxfamily.org/godotengine/
+            ${{ vars.CUSTOM_GODOT_VERSION || env.GODOT_VERSION }}/
+            Godot_v${{ vars.CUSTOM_GODOT_VERSION || env.GODOT_VERSION }}-
+            stable_linux.x86_64.zip
+          godot_export_templates_download_url: >-
+            https://downloads.tuxfamily.org/godotengine/
+            ${{ vars.CUSTOM_GODOT_VERSION || env.GODOT_VERSION }}/
+            Godot_v${{ vars.CUSTOM_GODOT_VERSION || env.GODOT_VERSION }}-
+            stable_export_templates.tpz
+          relative_project_path: ./
+          export_preset_name: ${{ matrix.export_preset }}
+
+      - name: Upload Custom Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: custom-${{ matrix.export_preset }}-build
+          path: build/
