@@ -132,20 +132,17 @@ func _create_collectible() -> Node2D:
 	collision.shape = shape
 	collectible.add_child(collision)
 	
-	# Connect collection signal
-	collectible.body_entered.connect(_on_collectible_collected)
+	# Connect collection signal with the collectible as a parameter
+	collectible.body_entered.connect(_on_collectible_collected.bind(collectible))
 	
 	return collectible
 
 # Handle collectible collection
-func _on_collectible_collected(body):
-	if body == player:
+func _on_collectible_collected(body, collectible):
+	if body == player and collectible in spawned_features:
 		print("Collectible collected!")
-		# Remove from tracking
-		var collectible = body.get_parent() if body.get_parent() is Area2D else null
-		if collectible and collectible in spawned_features:
-			spawned_features.erase(collectible)
-			collectible.queue_free()
+		spawned_features.erase(collectible)
+		collectible.queue_free()
 
 # Create a simple colored texture for basic features
 func _create_colored_texture(size: Vector2, color: Color) -> ImageTexture:

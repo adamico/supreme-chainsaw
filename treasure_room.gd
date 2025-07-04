@@ -88,8 +88,8 @@ func _create_treasure_chest() -> Node2D:
 	chest.set_meta("treasure_value", treasure_value)
 	total_treasure_value += treasure_value
 	
-	# Connect interaction signal
-	chest.body_entered.connect(_on_treasure_chest_opened)
+	# Connect interaction signal with the chest as a parameter
+	chest.body_entered.connect(_on_treasure_chest_opened.bind(chest))
 	
 	return chest
 
@@ -129,8 +129,8 @@ func _create_treasure_collectible() -> Node2D:
 	collectible.set_meta("collectible_type", type)
 	total_treasure_value += treasure_value
 	
-	# Connect collection signal
-	collectible.body_entered.connect(_on_treasure_collected)
+	# Connect collection signal with the collectible as a parameter
+	collectible.body_entered.connect(_on_treasure_collected.bind(collectible))
 	
 	return collectible
 
@@ -167,8 +167,8 @@ func _spawn_special_item(position: Vector2):
 	add_child(special_item)
 	spawned_features.append(special_item)
 	
-	# Connect collection signal
-	special_item.body_entered.connect(_on_special_item_collected)
+	# Connect collection signal with the special item as a parameter
+	special_item.body_entered.connect(_on_special_item_collected.bind(special_item))
 
 # Get value for different collectible types
 func _get_collectible_value(type: String) -> int:
@@ -214,44 +214,38 @@ func _create_special_item_texture() -> ImageTexture:
 	return texture
 
 # Handle treasure chest opening
-func _on_treasure_chest_opened(body):
-	if body == player:
-		var chest = body.get_parent() if body.get_parent() is Area2D else null
-		if chest and chest in spawned_features:
-			var treasure_value = chest.get_meta("treasure_value", 0)
-			collected_treasure_value += treasure_value
-			print("Treasure chest opened! Found treasure worth ", treasure_value, " points!")
-			print("Total collected: ", collected_treasure_value, "/", total_treasure_value)
-			
-			spawned_features.erase(chest)
-			chest.queue_free()
+func _on_treasure_chest_opened(body, chest):
+	if body == player and chest in spawned_features:
+		var treasure_value = chest.get_meta("treasure_value", 0)
+		collected_treasure_value += treasure_value
+		print("Treasure chest opened! Found treasure worth ", treasure_value, " points!")
+		print("Total collected: ", collected_treasure_value, "/", total_treasure_value)
+		
+		spawned_features.erase(chest)
+		chest.queue_free()
 
 # Handle regular treasure collection
-func _on_treasure_collected(body):
-	if body == player:
-		var treasure = body.get_parent() if body.get_parent() is Area2D else null
-		if treasure and treasure in spawned_features:
-			var treasure_value = treasure.get_meta("treasure_value", 0)
-			var treasure_type = treasure.get_meta("collectible_type", "unknown")
-			collected_treasure_value += treasure_value
-			print("Collected ", treasure_type, " worth ", treasure_value, " points!")
-			print("Total collected: ", collected_treasure_value, "/", total_treasure_value)
-			
-			spawned_features.erase(treasure)
-			treasure.queue_free()
+func _on_treasure_collected(body, treasure):
+	if body == player and treasure in spawned_features:
+		var treasure_value = treasure.get_meta("treasure_value", 0)
+		var treasure_type = treasure.get_meta("collectible_type", "unknown")
+		collected_treasure_value += treasure_value
+		print("Collected ", treasure_type, " worth ", treasure_value, " points!")
+		print("Total collected: ", collected_treasure_value, "/", total_treasure_value)
+		
+		spawned_features.erase(treasure)
+		treasure.queue_free()
 
 # Handle special item collection
-func _on_special_item_collected(body):
-	if body == player:
-		var item = body.get_parent() if body.get_parent() is Area2D else null
-		if item and item in spawned_features:
-			var treasure_value = item.get_meta("treasure_value", 0)
-			collected_treasure_value += treasure_value
-			print("SPECIAL ITEM FOUND! Rare treasure worth ", treasure_value, " points!")
-			print("Total collected: ", collected_treasure_value, "/", total_treasure_value)
-			
-			spawned_features.erase(item)
-			item.queue_free()
+func _on_special_item_collected(body, item):
+	if body == player and item in spawned_features:
+		var treasure_value = item.get_meta("treasure_value", 0)
+		collected_treasure_value += treasure_value
+		print("SPECIAL ITEM FOUND! Rare treasure worth ", treasure_value, " points!")
+		print("Total collected: ", collected_treasure_value, "/", total_treasure_value)
+		
+		spawned_features.erase(item)
+		item.queue_free()
 
 # Override room setup for treasure-specific configuration
 func _setup_room():

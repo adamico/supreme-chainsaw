@@ -61,7 +61,7 @@ func _create_feature(feature_type: FeatureType) -> Node2D:
 
 # Create an enemy
 func _create_enemy() -> Node2D:
-	var enemy = CharacterBody2D.new()
+	var enemy = Enemy.new()
 	enemy.name = "Enemy"
 	
 	# Add visual representation - red square for enemy
@@ -76,36 +76,9 @@ func _create_enemy() -> Node2D:
 	collision.shape = shape
 	enemy.add_child(collision)
 	
-	# Add simple AI component
-	var ai_script = GDScript.new()
-	ai_script.source_code = """
-extends CharacterBody2D
-
-var speed = 50.0
-var player_ref = null
-var detection_range = 150.0
-
-func _ready():
-	# Find player reference
-	var room = get_parent()
-	if room and room.has_method('get_spawned_features'):
-		player_ref = room.player
-
-func _physics_process(delta):
-	if not player_ref:
-		return
-	
-	var distance_to_player = global_position.distance_to(player_ref.global_position)
-	
-	# Simple follow behavior when player is in range
-	if distance_to_player < detection_range and distance_to_player > 30:
-		var direction = (player_ref.global_position - global_position).normalized()
-		velocity = direction * speed
-		move_and_slide()
-	else:
-		velocity = Vector2.ZERO
-"""
-	enemy.set_script(ai_script)
+	# Set player reference
+	if player:
+		enemy.set_player_reference(player)
 	
 	return enemy
 
@@ -126,8 +99,8 @@ func _create_health_pack() -> Node2D:
 	collision.shape = shape
 	health_pack.add_child(collision)
 	
-	# Connect collection signal
-	health_pack.body_entered.connect(_on_health_pack_collected)
+	# Connect collection signal with the health pack as a parameter
+	health_pack.body_entered.connect(_on_health_pack_collected.bind(health_pack))
 	
 	return health_pack
 
@@ -149,14 +122,11 @@ func _create_health_pack_texture() -> ImageTexture:
 	return texture
 
 # Handle health pack collection
-func _on_health_pack_collected(body):
-	if body == player:
+func _on_health_pack_collected(body, health_pack):
+	if body == player and health_pack in spawned_features:
 		print("Health pack collected! Player healed.")
-		# Remove from tracking
-		var health_pack = body.get_parent() if body.get_parent() is Area2D else null
-		if health_pack and health_pack in spawned_features:
-			spawned_features.erase(health_pack)
-			health_pack.queue_free()
+		spawned_features.erase(health_pack)
+		health_pack.queue_free()
 
 # Override room setup for battle-specific configuration
 func _setup_room():
