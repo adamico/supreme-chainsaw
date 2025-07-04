@@ -21,6 +21,19 @@ jobs:
     # Job name for better identification in the GitHub Actions UI
     name: Export Game
 
+    # Use matrix strategy to run each export in parallel, avoiding template conflicts
+    strategy:
+      matrix:
+        platform:
+          - name: Linux/X11
+            directory: linux
+          - name: Windows Desktop
+            directory: windows
+          - name: macOS
+            directory: macos
+          - name: Web
+            directory: web
+
     steps:
       # Step 1: Checkout the repository code
       - name: Checkout code
@@ -30,15 +43,11 @@ jobs:
 
       # Step 2: Create build directory structure
       - name: Create build directory
-        run: |
-          mkdir -p build/linux
-          mkdir -p build/windows
-          mkdir -p build/macos
-          mkdir -p build/web
+        run: mkdir -p build/${{ matrix.platform.directory }}
 
-      # Step 3: Export for Linux
-      - name: Build for Linux
-        id: linux
+      # Step 3: Export for the current platform
+      - name: Build for ${{ matrix.platform.name }}
+        id: export
         uses: firebelley/godot-export@v5.2.0
         with:
           # Godot version to use for export
@@ -47,68 +56,16 @@ jobs:
           # Path to the project directory (current directory)
           relative_project_path: ./
           # Export preset name (must match the name in export_presets.cfg)
-          export_preset_name: Linux/X11
+          export_preset_name: ${{ matrix.platform.name }}
+          # Use cache to speed up builds
+          cache: true
 
-      # Step 4: Export for Windows
-      - name: Build for Windows
-        id: windows
-        uses: firebelley/godot-export@v5.2.0
-        with:
-          godot_executable_download_url: https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_linux.x86_64.zip
-          godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz
-          relative_project_path: ./
-          export_preset_name: Windows Desktop
-
-      # Step 5: Export for macOS
-      - name: Build for macOS
-        id: macos
-        uses: firebelley/godot-export@v5.2.0
-        with:
-          godot_executable_download_url: https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_linux.x86_64.zip
-          godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz
-          relative_project_path: ./
-          export_preset_name: macOS
-
-      # Step 6: Export for Web (HTML5)
-      - name: Build for Web
-        id: web
-        uses: firebelley/godot-export@v5.2.0
-        with:
-          godot_executable_download_url: https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_linux.x86_64.zip
-          godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz
-          relative_project_path: ./
-          export_preset_name: Web
-
-      # Step 7: Upload Linux build as workflow artifact
-      - name: Upload Linux Build
+      # Step 4: Upload build as workflow artifact
+      - name: Upload ${{ matrix.platform.name }} Build
         uses: actions/upload-artifact@v4
         with:
-          name: linux-build
-          path: build/linux/
-          if-no-files-found: error
-
-      # Step 8: Upload Windows build as workflow artifact
-      - name: Upload Windows Build
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-build
-          path: build/windows/
-          if-no-files-found: error
-
-      # Step 9: Upload macOS build as workflow artifact
-      - name: Upload macOS Build
-        uses: actions/upload-artifact@v4
-        with:
-          name: macos-build
-          path: build/macos/
-          if-no-files-found: error
-
-      # Step 10: Upload Web build as workflow artifact
-      - name: Upload Web Build
-        uses: actions/upload-artifact@v4
-        with:
-          name: web-build
-          path: build/web/
+          name: ${{ matrix.platform.directory }}-build
+          path: ${{ steps.export.outputs.build_directory }}
           if-no-files-found: error
 
   # Additional job for customizable exports (can be enabled by setting custom
