@@ -1,0 +1,6 @@
+extends: default
+rules:
+  line-length:
+    max: 300  # Allow longer lines for GitHub Actions workflows with URLs
+  comments:
+    min-spaces-from-content: 1
