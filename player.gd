@@ -62,7 +62,7 @@ func _handle_movement(delta):
 		# Apply friction when no input
 		velocity = velocity.move_toward(Vector2.ZERO, FRICTION * delta)
 
-func _update_state_machine(delta):
+func _update_state_machine(_delta):
 	match current_state:
 		PlayerState.IDLE:
 			if input_vector != Vector2.ZERO:

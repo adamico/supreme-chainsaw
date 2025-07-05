@@ -135,7 +135,7 @@ func _create_treasure_collectible() -> Node2D:
 	return collectible
 
 # Spawn a special item with unique properties
-func _spawn_special_item(position: Vector2):
+func _spawn_special_item(spawn_position: Vector2):
 	var special_item = Area2D.new()
 	special_item.name = "SpecialItem"
 	
@@ -158,12 +158,12 @@ func _spawn_special_item(position: Vector2):
 	total_treasure_value += treasure_value
 	
 	# Add glowing effect
-	var tween = create_tween()
+	var tween = special_item.create_tween()
 	tween.set_loops()
 	tween.tween_property(sprite, "modulate:a", 0.5, 1.0)
 	tween.tween_property(sprite, "modulate:a", 1.0, 1.0)
 	
-	special_item.global_position = position
+	special_item.global_position = spawn_position
 	add_child(special_item)
 	spawned_features.append(special_item)
 	
@@ -192,8 +192,7 @@ func _create_chest_texture() -> ImageTexture:
 		for y in range(10, 14):
 			image.set_pixel(x, y, Color.GOLD)
 	
-	var texture = ImageTexture.new()
-	texture.create_from_image(image)
+	var texture = ImageTexture.create_from_image(image)
 	return texture
 
 # Create a special item texture with gradient effect
@@ -209,8 +208,7 @@ func _create_special_item_texture() -> ImageTexture:
 			var color = Color.PURPLE.lerp(Color.WHITE, intensity * 0.5)
 			image.set_pixel(x, y, color)
 	
-	var texture = ImageTexture.new()
-	texture.create_from_image(image)
+	var texture = ImageTexture.create_from_image(image)
 	return texture
 
 # Handle treasure chest opening

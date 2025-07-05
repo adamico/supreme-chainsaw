@@ -1,9 +1,6 @@
-extends TileMapLayer
-
 # Base Room class for handling room features spawning
 # This class provides the foundation for different room types and their unique features
-
-class_name Room
+class_name Room extends TileMapLayer
 
 # Room types enum for extensibility
 enum RoomType {
@@ -32,16 +29,19 @@ var feature_spawn_points: Array[Vector2] = []
 # References
 @onready var player: CharacterBody2D = $Player
 
+
 func _ready():
 	print("Room initialized - Type: ", RoomType.keys()[room_type])
 	_setup_room()
 	_generate_spawn_points()
 	_spawn_room_features()
 
+
 # Virtual method to be overridden by specific room types
 func _spawn_room_features():
 	print("Base room spawning features...")
 	# This will be overridden by specific room implementations
+
 
 # Generate potential spawn points for features
 func _generate_spawn_points():
@@ -61,6 +61,7 @@ func _generate_spawn_points():
 	
 	print("Generated ", feature_spawn_points.size(), " potential spawn points")
 
+
 # Get a random available spawn point
 func _get_random_spawn_point() -> Vector2:
 	if feature_spawn_points.is_empty():
@@ -75,15 +76,17 @@ func _get_random_spawn_point() -> Vector2:
 	feature_spawn_points.remove_at(index)  # Remove used point
 	return point
 
+
 # Spawn a specific feature at a given position
-func _spawn_feature(feature_type: FeatureType, position: Vector2) -> Node2D:
+func _spawn_feature(feature_type: FeatureType, spawn_position: Vector2) -> Node2D:
 	var feature_node = _create_feature(feature_type)
 	if feature_node:
-		feature_node.global_position = position
+		feature_node.global_position = spawn_position
 		add_child(feature_node)
 		spawned_features.append(feature_node)
-		print("Spawned ", FeatureType.keys()[feature_type], " at ", position)
+		print("Spawned ", FeatureType.keys()[feature_type], " at ", spawn_position)
 	return feature_node
+
 
 # Create a feature node based on type - to be extended by subclasses
 func _create_feature(feature_type: FeatureType) -> Node2D:
@@ -95,6 +98,7 @@ func _create_feature(feature_type: FeatureType) -> Node2D:
 		_:
 			print("Feature type not implemented in base class: ", FeatureType.keys()[feature_type])
 			return null
+
 
 # Create a basic obstacle (can be overridden)
 func _create_obstacle() -> Node2D:
@@ -114,6 +118,7 @@ func _create_obstacle() -> Node2D:
 	obstacle.add_child(collision)
 	
 	return obstacle
+
 
 # Create a basic collectible (can be overridden)
 func _create_collectible() -> Node2D:
@@ -137,6 +142,7 @@ func _create_collectible() -> Node2D:
 	
 	return collectible
 
+
 # Handle collectible collection
 func _on_collectible_collected(body, collectible):
 	if body == player and collectible in spawned_features:
@@ -144,26 +150,30 @@ func _on_collectible_collected(body, collectible):
 		spawned_features.erase(collectible)
 		collectible.queue_free()
 
+
 # Create a simple colored texture for basic features
 func _create_colored_texture(size: Vector2, color: Color) -> ImageTexture:
 	var image = Image.create(int(size.x), int(size.y), false, Image.FORMAT_RGB8)
 	image.fill(color)
-	var texture = ImageTexture.new()
-	texture.create_from_image(image)
+	var texture = ImageTexture.create_from_image(image)
 	return texture
+
 
 # Setup room-specific properties
 func _setup_room():
 	# This can be overridden by specific room types for custom setup
 	pass
 
+
 # Public method to get room type
 func get_room_type() -> RoomType:
 	return room_type
 
+
 # Public method to get spawned features
 func get_spawned_features() -> Array[Node2D]:
 	return spawned_features.duplicate()
+
 
 # Public method to clear all features (useful for room transitions)
 func clear_features():
@@ -172,6 +182,7 @@ func clear_features():
 			feature.queue_free()
 	spawned_features.clear()
 	_generate_spawn_points()  # Regenerate spawn points
+
 
 # Public method to respawn features (useful for room reset)
 func respawn_features():

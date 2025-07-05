@@ -117,8 +117,7 @@ func _create_health_pack_texture() -> ImageTexture:
 		for y in range(8, 12):
 			image.set_pixel(x, y, Color.WHITE)
 	
-	var texture = ImageTexture.new()
-	texture.create_from_image(image)
+	var texture = ImageTexture.create_from_image(image)
 	return texture
 
 # Handle health pack collection

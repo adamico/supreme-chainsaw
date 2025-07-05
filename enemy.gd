@@ -15,7 +15,7 @@ func _ready():
 	if room and room.has_method("get_spawned_features"):
 		player_ref = room.player
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	if not player_ref:
 		return
 	

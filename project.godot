@@ -12,8 +12,8 @@ config_version=5
 
 config/name="Supreme Chainsaw"
 config/description="A 2D game project with player movement and interaction"
-run/main_scene="uid://cqy6x8j02mivj"
-config/features=PackedStringArray("4.3")
+run/main_scene="uid://bqk7w5x3kamp1"
+config/features=PackedStringArray("4.4")
 
 [display]
 
@@ -60,6 +60,7 @@ interact={
 
 [physics]
 
+common/physics_interpolation=true
 common/enable_pause_aware_picking=true
 
 [rendering]

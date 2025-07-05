@@ -1,7 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://cxk8y2m4n6qp9"]
+[gd_scene load_steps=3 format=3 uid="uid://cxk8y2m4n6qqa"]
 
 [ext_resource type="PackedScene" uid="uid://d3iwnpjnk7a1g" path="res://player.tscn" id="1_player"]
-[ext_resource type="Script" path="res://battle_room.gd" id="2_battle_room_script"]
+[ext_resource type="Script" uid="uid://nl6s0k2psg3j" path="res://battle_room.gd" id="2_battle_room_script"]
 
 [node name="BattleRoom" type="TileMapLayer"]
 script = ExtResource("2_battle_room_script")

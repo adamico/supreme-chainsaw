@@ -40,29 +40,29 @@ class_name MyCustomRoom
 @export var custom_feature_count: int = 3
 
 func _ready():
-    room_type = RoomType.BATTLE  # or create new enum value
-    super._ready()
+	room_type = RoomType.BATTLE  # or create new enum value
+	super._ready()
 
 func _spawn_room_features():
-    print("Spawning custom room features...")
-    for i in range(custom_feature_count):
-        if feature_spawn_points.size() > 0:
-            var spawn_pos = _get_random_spawn_point()
-            _spawn_custom_feature(spawn_pos)
+	print("Spawning custom room features...")
+	for i in range(custom_feature_count):
+		if feature_spawn_points.size() > 0:
+			var spawn_pos = _get_random_spawn_point()
+			_spawn_custom_feature(spawn_pos)
 
 func _spawn_custom_feature(position: Vector2):
-    # Create your custom feature here
-    var feature = _create_my_feature()
-    if feature:
-        feature.global_position = position
-        add_child(feature)
-        spawned_features.append(feature)
+	# Create your custom feature here
+	var feature = _create_my_feature()
+	if feature:
+		feature.global_position = position
+		add_child(feature)
+		spawned_features.append(feature)
 
 func _create_my_feature() -> Node2D:
-    # Implement your custom feature creation
-    var feature = Area2D.new()
-    # ... add sprites, collision, logic
-    return feature
+	# Implement your custom feature creation
+	var feature = Area2D.new()
+	# ... add sprites, collision, logic
+	return feature
 ```
 
 ### 2. Create the Scene File
@@ -78,9 +78,9 @@ const MY_CUSTOM_ROOM_SCENE = preload("res://my_custom_room.tscn")
 
 # Add to the enum in room.gd:
 enum RoomType {
-    BATTLE,
-    TREASURE,
-    MY_CUSTOM  # Your new type
+	BATTLE,
+	TREASURE,
+	MY_CUSTOM  # Your new type
 }
 ```
 
@@ -111,8 +111,8 @@ Each room type can be configured via export variables:
 # Access room and modify spawn counts
 var battle_room = current_room as BattleRoom
 if battle_room:
-    battle_room.enemy_count = 5  # More enemies!
-    battle_room.respawn_features()  # Apply changes
+	battle_room.enemy_count = 5  # More enemies!
+	battle_room.respawn_features()  # Apply changes
 ```
 
 ## Feature Creation Examples
@@ -120,46 +120,46 @@ if battle_room:
 ### Custom Enemy with Unique Behavior
 ```gdscript
 func _create_custom_enemy() -> Node2D:
-    var enemy = Enemy.new()
-    enemy.speed = 75.0  # Faster enemy
-    enemy.detection_range = 200.0  # Longer range
-    
-    # Custom sprite
-    var sprite = Sprite2D.new()
-    sprite.texture = preload("res://my_enemy_sprite.png")
-    enemy.add_child(sprite)
-    
-    return enemy
+	var enemy = Enemy.new()
+	enemy.speed = 75.0  # Faster enemy
+	enemy.detection_range = 200.0  # Longer range
+	
+	# Custom sprite
+	var sprite = Sprite2D.new()
+	sprite.texture = preload("res://my_enemy_sprite.png")
+	enemy.add_child(sprite)
+	
+	return enemy
 ```
 
 ### Interactive Feature with Custom Logic
 ```gdscript
 func _create_puzzle_door() -> Node2D:
-    var door = StaticBody2D.new()
-    door.name = "PuzzleDoor"
-    
-    # Add visual and collision
-    var sprite = Sprite2D.new()
-    sprite.texture = _create_colored_texture(Vector2(32, 64), Color.BROWN)
-    door.add_child(sprite)
-    
-    # Add interaction area
-    var interaction_area = Area2D.new()
-    var collision = CollisionShape2D.new()
-    collision.shape = RectangleShape2D.new()
-    collision.shape.size = Vector2(40, 70)
-    interaction_area.add_child(collision)
-    door.add_child(interaction_area)
-    
-    # Connect interaction
-    interaction_area.body_entered.connect(_on_door_approached.bind(door))
-    
-    return door
+	var door = StaticBody2D.new()
+	door.name = "PuzzleDoor"
+	
+	# Add visual and collision
+	var sprite = Sprite2D.new()
+	sprite.texture = _create_colored_texture(Vector2(32, 64), Color.BROWN)
+	door.add_child(sprite)
+	
+	# Add interaction area
+	var interaction_area = Area2D.new()
+	var collision = CollisionShape2D.new()
+	collision.shape = RectangleShape2D.new()
+	collision.shape.size = Vector2(40, 70)
+	interaction_area.add_child(collision)
+	door.add_child(interaction_area)
+	
+	# Connect interaction
+	interaction_area.body_entered.connect(_on_door_approached.bind(door))
+	
+	return door
 
 func _on_door_approached(body, door):
-    if body == player:
-        print("Puzzle door activated!")
-        # Add puzzle logic here
+	if body == player:
+		print("Puzzle door activated!")
+		# Add puzzle logic here
 ```
 
 ## Testing Your Rooms
@@ -198,14 +198,14 @@ await test_runner.run_full_test()
 var enemy_pool: Array[Enemy] = []
 
 func _get_pooled_enemy() -> Enemy:
-    if enemy_pool.is_empty():
-        return Enemy.new()
-    else:
-        return enemy_pool.pop_back()
+	if enemy_pool.is_empty():
+		return Enemy.new()
+	else:
+		return enemy_pool.pop_back()
 
 func _return_enemy_to_pool(enemy: Enemy):
-    enemy.get_parent().remove_child(enemy)
-    enemy_pool.append(enemy)
+	enemy.get_parent().remove_child(enemy)
+	enemy_pool.append(enemy)
 ```
 
 ## Debugging and Troubleshooting
@@ -220,13 +220,13 @@ func _return_enemy_to_pool(enemy: Enemy):
 ```gdscript
 # Add to your room for debugging
 func _input(event):
-    if event.is_action_pressed("ui_cancel"):  # ESC key
-        print("=== Room Debug Info ===")
-        print("Room type: ", RoomType.keys()[room_type])
-        print("Spawned features: ", spawned_features.size())
-        print("Available spawn points: ", feature_spawn_points.size())
-        for feature in spawned_features:
-            print("- ", feature.name, " at ", feature.global_position)
+	if event.is_action_pressed("ui_cancel"):  # ESC key
+		print("=== Room Debug Info ===")
+		print("Room type: ", RoomType.keys()[room_type])
+		print("Spawned features: ", spawned_features.size())
+		print("Available spawn points: ", feature_spawn_points.size())
+		for feature in spawned_features:
+			print("- ", feature.name, " at ", feature.global_position)
 ```
 
 This Room system provides a solid foundation for creating diverse, feature-rich game rooms while maintaining clean, extensible code architecture.
