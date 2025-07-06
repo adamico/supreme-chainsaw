@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://cm3dlb86edp7y"]
+
+[ext_resource type="PackedScene" uid="uid://d3iwnpjnk7a1g" path="res://src/player/player.tscn" id="1_d6cwe"]
+[ext_resource type="Script" uid="uid://f3ldqcmc87ta" path="res://src/rooms/sacrifice_room.gd" id="1_gqpka"]
+
+[node name="SacrificeRoom" type="TileMapLayer"]
+script = ExtResource("1_gqpka")
+
+[node name="Player" parent="." instance=ExtResource("1_d6cwe")]
+position = Vector2(303, 148)

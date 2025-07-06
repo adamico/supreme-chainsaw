@@ -6,7 +6,7 @@ class_name Room extends TileMapLayer
 enum RoomType {
 	BATTLE,
 	ENTRY,
-	TREASURE
+	SACRIFICE,
 }
 
 # Feature types that can be spawned in rooms
@@ -189,8 +189,8 @@ func _on_door_entered(body, target_room_type: RoomType):
 	match target_room_type:
 		RoomType.BATTLE:
 			print("Entering Battle Room...")
-		RoomType.TREASURE:
-			print("Entering Treasure Room...")
+		RoomType.SACRIFICE:
+			print("Entering Sacrifice Room...")
 		_:
 			print("Unknown room type for door: ", target_room_type)
 			return
