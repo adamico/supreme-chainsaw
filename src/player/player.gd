@@ -15,9 +15,25 @@ enum PlayerState {
 @export var friction: float = 1000.0
 
 # Player stats
-@export var health: int = 100
-@export var experience: int = 0
-@export var memory_shards: int = 1
+@export var max_health: int
+@export var health: int:
+	set(value):
+		health = clamp(value, 0, max_health)
+		print("Player health changed to: ", health)
+		EventBus.player_health_changed.emit(health)
+
+@export var experience: int:
+	set(value):
+		experience = max(value, 0)
+		print("Player experience changed to: ", experience)
+		EventBus.player_experience_changed.emit(experience)
+
+@export var memory_shards: int:
+	set(value):
+		memory_shards = max(value, 0)
+		print("Player memory shards changed to: ", memory_shards)
+		EventBus.player_memory_shards_changed.emit(memory_shards)
+
 @export var damage: float = 10.0
 
 var current_state: PlayerState = PlayerState.IDLE
@@ -28,8 +44,12 @@ var input_vector: Vector2 = Vector2.ZERO
 
 
 func _ready() -> void:
-	print("Player initialized")
+	# Initialize player stats
+	health = 30
+	experience = 0
+	memory_shards = 1
 	_change_state(PlayerState.IDLE)
+	print("Player initialized")
 
 
 func _physics_process(delta) -> void:
@@ -49,13 +69,13 @@ func _handle_input() -> void:
 func _handle_movement(delta) -> void:
 	var target_velocity: Vector2
 	var velocity_rate: float
-	if input_vector != Vector2.ZERO:		
+	if input_vector != Vector2.ZERO:
 		velocity_rate = acceleration
 		target_velocity = input_vector * speed
 	else:
 		velocity_rate = friction
 		target_velocity = Vector2.ZERO
-	
+
 	velocity = velocity.move_toward(target_velocity, velocity_rate * delta)
 
 
@@ -64,11 +84,11 @@ func _update_state_machine(_delta):
 		PlayerState.IDLE:
 			if input_vector != Vector2.ZERO:
 				_change_state(PlayerState.MOVING)
-		
+
 		PlayerState.MOVING:
 			if input_vector == Vector2.ZERO:
 				_change_state(PlayerState.IDLE)
-		
+
 		PlayerState.INTERACTING:
 			await get_tree().create_timer(0.5).timeout
 			if input_vector != Vector2.ZERO:
@@ -80,12 +100,12 @@ func _update_state_machine(_delta):
 func _change_state(new_state: PlayerState):
 	if current_state == new_state:
 		return
-	
+
 	_exit_state(current_state)
-	
+
 	current_state = new_state
 	print("Player state changed to: ", PlayerState.keys()[current_state])
-	
+
 	_enter_state(new_state)
 
 
@@ -112,7 +132,7 @@ func _exit_state(state: PlayerState):
 func _update_sprite_animation():
 	if not sprite:
 		return
-	
+
 	match current_state:
 		PlayerState.IDLE:
 			_play_animation("idle")
@@ -120,14 +140,14 @@ func _update_sprite_animation():
 				sprite.flip_h = false
 			elif velocity.x < 0:
 				sprite.flip_h = true
-		
+
 		PlayerState.MOVING:
 			_play_animation("walk")
 			if input_vector.x > 0:
 				sprite.flip_h = false
 			elif input_vector.x < 0:
 				sprite.flip_h = true
-		
+
 		PlayerState.INTERACTING:
 			_play_animation("interact")
 
@@ -140,24 +160,24 @@ func _play_animation(animation_name: String):
 
 func _perform_interact():
 	print("Interact action triggered!")
-	
+
 	if current_state != PlayerState.INTERACTING:
 		_change_state(PlayerState.INTERACTING)
-	
+
 	# Here you can add specific interaction logic:
 	# - Check for nearby objects to interact with
 	# - Trigger dialogue systems
 	# - Open inventory
 	# - Use items
 	# - etc.
-	
+
 	# Example: Look for interactable objects in range
 	_check_for_interactables()
 
 
 func _check_for_interactables() -> void:
 	print("Checking for nearby interactable objects...")
-	
+
 	# Placeholder for interaction logic
 	# In a real game, you might:
 	# 1. Use get_overlapping_bodies() on an Area2D

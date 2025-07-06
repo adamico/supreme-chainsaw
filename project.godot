@@ -15,6 +15,10 @@ config/description="A 2D game project with player movement and interaction"
 run/main_scene="uid://bqk7w5x3kamp1"
 config/features=PackedStringArray("4.4")
 
+[autoload]
+
+EventBus="*res://src/globals/event_bus.gd"
+
 [display]
 
 window/size/viewport_width=640

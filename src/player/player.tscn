@@ -7,6 +7,8 @@
 [node name="Player" type="CharacterBody2D" groups=["players"]]
 collision_layer = 3
 script = ExtResource("1_4flbx")
+max_health = 100
+memory_shards = 1
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 

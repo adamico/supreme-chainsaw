@@ -53,34 +53,34 @@ func _create_feature(feature_type: FeatureType) -> Node2D:
 func _create_enemy(enemy_name: String = "Enemy") -> Node2D:
 	var enemy = GRASPING_WRETCH_SCENE.instantiate()
 	enemy.name = enemy_name
-	
+
 	# Add visual representation - red square for enemy
 	var sprite = Sprite2D.new()
 	sprite.texture = _create_colored_texture(Vector2(24, 24), Color.RED)
 	enemy.add_child(sprite)
-	
+
 	return enemy
 
 
 func _create_health_pack() -> Node2D:
 	var health_pack = Area2D.new()
 	health_pack.name = "HealthPack"
-	
+
 	# Add visual representation - green cross
 	var sprite = Sprite2D.new()
 	sprite.texture = _create_health_pack_texture()
 	health_pack.add_child(sprite)
-	
+
 	# Add collision for detection
 	var collision = CollisionShape2D.new()
 	var shape = RectangleShape2D.new()
 	shape.size = Vector2(20, 20)
 	collision.shape = shape
 	health_pack.add_child(collision)
-	
+
 	# Connect collection signal with the health pack as a parameter
 	health_pack.body_entered.connect(_on_health_pack_collected.bind(health_pack))
-	
+
 	return health_pack
 
 
@@ -88,7 +88,7 @@ func _create_health_pack() -> Node2D:
 func _create_health_pack_texture() -> ImageTexture:
 	var image = Image.create(20, 20, false, Image.FORMAT_RGB8)
 	image.fill(Color.GREEN)
-	
+
 	# Draw a simple cross
 	for x in range(8, 12):
 		for y in range(20):
@@ -96,7 +96,7 @@ func _create_health_pack_texture() -> ImageTexture:
 	for x in range(20):
 		for y in range(8, 12):
 			image.set_pixel(x, y, Color.WHITE)
-	
+
 	var texture = ImageTexture.create_from_image(image)
 	return texture
 
@@ -107,6 +107,7 @@ func _on_health_pack_collected(body, health_pack):
 		print("Health pack collected! Player healed.")
 		spawned_features.erase(health_pack)
 		health_pack.queue_free()
+		body.health += 20  # Heal the player by 20 health points
 
 
 # Override room setup for battle-specific configuration
