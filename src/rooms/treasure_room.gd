@@ -28,7 +28,7 @@ func _spawn_treasure_chests():
 	for i in range(treasure_chest_count):
 		if feature_spawn_points.size() > 0:
 			var spawn_pos = _get_random_spawn_point()
-			_spawn_feature(FeatureType.TREASURE_CHEST, spawn_pos)
+			spawn_feature(FeatureType.TREASURE_CHEST, spawn_pos)
 
 
 func _spawn_collectibles():
@@ -36,7 +36,7 @@ func _spawn_collectibles():
 	for i in range(collectible_count):
 		if feature_spawn_points.size() > 0:
 			var spawn_pos = _get_random_spawn_point()
-			_spawn_feature(FeatureType.COLLECTIBLE, spawn_pos)
+			spawn_feature(FeatureType.COLLECTIBLE, spawn_pos)
 
 
 func _spawn_special_items():
@@ -58,7 +58,6 @@ func _create_feature(feature_type: FeatureType) -> Node2D:
 		_:
 			# Fall back to base class for common features
 			return super._create_feature(feature_type)
-
 
 
 func _create_treasure_chest() -> Node2D:
@@ -86,7 +85,6 @@ func _create_treasure_chest() -> Node2D:
 	chest.body_entered.connect(_on_treasure_chest_opened.bind(chest))
 	
 	return chest
-
 
 
 func _create_treasure_collectible() -> Node2D:

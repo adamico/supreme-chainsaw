@@ -88,7 +88,7 @@ func _spawn_door(door_position: Vector2, target_room_type: RoomType):
 
 
 # Spawn a specific feature at a given position
-func _spawn_feature(feature_type: FeatureType, spawn_position: Vector2) -> Node2D:
+func spawn_feature(feature_type: FeatureType, spawn_position: Vector2) -> Node2D:
 	var feature_node = _create_feature(feature_type)
 	if feature_node:
 		feature_node.global_position = spawn_position

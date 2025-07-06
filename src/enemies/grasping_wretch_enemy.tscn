@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=3 uid="uid://bf1wa731iextr"]
+
+[ext_resource type="Script" uid="uid://bw3wi7qs0rpyl" path="res://src/enemies/enemy.gd" id="1_6t1wc"]
+[ext_resource type="Script" uid="uid://bihkcn5ihs8cn" path="res://src/components/hurt_box_component.gd" id="2_pi86q"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6t1wc"]
+size = Vector2(24, 24)
+
+[node name="GraspingWretchEnemy" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 5
+script = ExtResource("1_6t1wc")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_6t1wc")
+
+[node name="HurtBoxComponent" type="Area2D" parent="."]
+unique_name_in_owner = true
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("2_pi86q")
+metadata/_custom_type_script = "uid://bihkcn5ihs8cn"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBoxComponent"]
+shape = SubResource("RectangleShape2D_6t1wc")
+
+[node name="InvulnTimer" type="Timer" parent="HurtBoxComponent"]
+one_shot = true

@@ -13,6 +13,6 @@ func _spawn_room_features() -> void:
 
 func _spawn_sacrifice_message() -> void:
 	var sacrifice_message = Label.new()
-	sacrifice_message.text = "Make a sacrifice to gain power!"
-	sacrifice_message.position = Vector2(160, 8)  # Centered position
+	sacrifice_message.text = "Everything has a price! Make your choice!"
+	sacrifice_message.position = Vector2(160, 8)
 	add_child(sacrifice_message)

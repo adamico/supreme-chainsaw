@@ -18,6 +18,7 @@ enum PlayerState {
 @export var health: int = 100
 @export var experience: int = 0
 @export var memory_shards: int = 1
+@export var damage: float = 10.0
 
 var current_state: PlayerState = PlayerState.IDLE
 var input_vector: Vector2 = Vector2.ZERO

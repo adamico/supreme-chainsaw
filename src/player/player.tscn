@@ -4,7 +4,8 @@
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_onrkg"]
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" groups=["players"]]
+collision_layer = 3
 script = ExtResource("1_4flbx")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

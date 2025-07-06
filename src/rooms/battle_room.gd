@@ -2,10 +2,12 @@
 # Spawns enemies, obstacles, and health packs
 class_name BattleRoom extends Room
 
+const GRASPING_WRETCH_SCENE: PackedScene = preload("res://src/enemies/grasping_wretch_enemy.tscn")
+
 # Battle room specific configuration
-@export var enemy_count: int = 3
+@export var enemy_count: int = 1
 @export var obstacle_count: int = 2
-@export var health_pack_count: int = 1
+
 
 
 func _ready():
@@ -18,7 +20,6 @@ func _spawn_room_features():
 	print("BattleRoom spawning combat features...")
 	_spawn_enemies()
 	_spawn_obstacles()
-	_spawn_health_packs()
 
 
 func _spawn_enemies():
@@ -26,7 +27,7 @@ func _spawn_enemies():
 	for i in range(enemy_count):
 		if feature_spawn_points.size() > 0:
 			var spawn_pos = _get_random_spawn_point()
-			_spawn_feature(FeatureType.ENEMY, spawn_pos)
+			spawn_feature(FeatureType.ENEMY, spawn_pos)
 
 
 func _spawn_obstacles():
@@ -34,15 +35,7 @@ func _spawn_obstacles():
 	for i in range(obstacle_count):
 		if feature_spawn_points.size() > 0:
 			var spawn_pos = _get_random_spawn_point()
-			_spawn_feature(FeatureType.OBSTACLE, spawn_pos)
-
-
-func _spawn_health_packs():
-	print("Spawning ", health_pack_count, " health packs")
-	for i in range(health_pack_count):
-		if feature_spawn_points.size() > 0:
-			var spawn_pos = _get_random_spawn_point()
-			_spawn_feature(FeatureType.HEALTH_PACK, spawn_pos)
+			spawn_feature(FeatureType.OBSTACLE, spawn_pos)
 
 
 # Override feature creation for battle-specific features
@@ -57,25 +50,14 @@ func _create_feature(feature_type: FeatureType) -> Node2D:
 			return super._create_feature(feature_type)
 
 
-func _create_enemy() -> Node2D:
-	var enemy = Enemy.new()
-	enemy.name = "Enemy"
+func _create_enemy(enemy_name: String = "Enemy") -> Node2D:
+	var enemy = GRASPING_WRETCH_SCENE.instantiate()
+	enemy.name = enemy_name
 	
 	# Add visual representation - red square for enemy
 	var sprite = Sprite2D.new()
 	sprite.texture = _create_colored_texture(Vector2(24, 24), Color.RED)
 	enemy.add_child(sprite)
-	
-	# Add collision
-	var collision = CollisionShape2D.new()
-	var shape = RectangleShape2D.new()
-	shape.size = Vector2(24, 24)
-	collision.shape = shape
-	enemy.add_child(collision)
-	
-	# Set player reference
-	if player:
-		enemy.set_player_reference(player)
 	
 	return enemy
 
