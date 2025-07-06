@@ -1,6 +1,5 @@
 # TreasureRoom - A room type focused on exploration and collection
 # Spawns treasure chests, collectibles, and special items
-
 class_name TreasureRoom extends Room
 
 @export var treasure_chest_count: int = 2

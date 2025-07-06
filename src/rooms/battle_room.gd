@@ -1,6 +1,5 @@
 # BattleRoom - A room type focused on combat encounters
 # Spawns enemies, obstacles, and health packs
-
 class_name BattleRoom extends Room
 
 # Battle room specific configuration

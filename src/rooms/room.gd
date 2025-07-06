@@ -5,16 +5,18 @@ class_name Room extends TileMapLayer
 # Room types enum for extensibility
 enum RoomType {
 	BATTLE,
+	ENTRY,
 	TREASURE
 }
 
 # Feature types that can be spawned in rooms
 enum FeatureType {
+	COLLECTIBLE,
+	DOOR,
 	ENEMY,
+	HEALTH_PACK,
 	OBSTACLE,
 	TREASURE_CHEST,
-	COLLECTIBLE,
-	HEALTH_PACK
 }
 
 @export var room_type: RoomType = RoomType.BATTLE
@@ -43,19 +45,19 @@ func _spawn_room_features():
 # Generate potential spawn points for features
 func _generate_spawn_points():
 	feature_spawn_points.clear()
-	
+
 	# Generate a grid of potential spawn points, avoiding the player start position
 	var player_pos = player.global_position if player else Vector2(320, 180)
 	var spacing = 80
 	var margin = 60
-	
+
 	for x in range(margin, int(room_size.x) - margin, spacing):
 		for y in range(margin, int(room_size.y) - margin, spacing):
 			var spawn_point = Vector2(x, y)
 			# Avoid spawning too close to player
 			if spawn_point.distance_to(player_pos) > 100:
 				feature_spawn_points.append(spawn_point)
-	
+
 	print("Generated ", feature_spawn_points.size(), " potential spawn points")
 
 
@@ -67,11 +69,22 @@ func _get_random_spawn_point() -> Vector2:
 			randf_range(60, room_size.x - 60),
 			randf_range(60, room_size.y - 60)
 		)
-	
+
 	var index = randi() % feature_spawn_points.size()
 	var point = feature_spawn_points[index]
 	feature_spawn_points.remove_at(index)  # Remove used point
 	return point
+
+
+func _spawn_door(door_position: Vector2, target_room_type: RoomType):
+	var door = _create_door(target_room_type)
+	if door:
+		door.name = "Door to " + RoomType.keys()[target_room_type]
+		door.global_position = door_position
+		add_child(door)
+		spawned_features.append(door)
+
+		print("Spawned door to ", RoomType.keys()[target_room_type], " at ", door_position)
 
 
 # Spawn a specific feature at a given position
@@ -88,56 +101,76 @@ func _spawn_feature(feature_type: FeatureType, spawn_position: Vector2) -> Node2
 # Create a feature node based on type - to be extended by subclasses
 func _create_feature(feature_type: FeatureType) -> Node2D:
 	match feature_type:
-		FeatureType.OBSTACLE:
-			return _create_obstacle()
 		FeatureType.COLLECTIBLE:
 			return _create_collectible()
+		FeatureType.OBSTACLE:
+			return _create_obstacle()
 		_:
 			print("Feature type not implemented in base class: ", FeatureType.keys()[feature_type])
 			return null
-
-
-# Create a basic obstacle (can be overridden)
-func _create_obstacle() -> Node2D:
-	var obstacle = StaticBody2D.new()
-	obstacle.name = "Obstacle"
-	
-	# Add visual representation
-	var sprite = Sprite2D.new()
-	sprite.texture = _create_colored_texture(Vector2(32, 32), Color.GRAY)
-	obstacle.add_child(sprite)
-	
-	# Add collision
-	var collision = CollisionShape2D.new()
-	var shape = RectangleShape2D.new()
-	shape.size = Vector2(32, 32)
-	collision.shape = shape
-	obstacle.add_child(collision)
-	
-	return obstacle
 
 
 # Create a basic collectible (can be overridden)
 func _create_collectible() -> Node2D:
 	var collectible = Area2D.new()
 	collectible.name = "Collectible"
-	
+
 	# Add visual representation
 	var sprite = Sprite2D.new()
 	sprite.texture = _create_colored_texture(Vector2(16, 16), Color.YELLOW)
 	collectible.add_child(sprite)
-	
+
 	# Add collision for detection
 	var collision = CollisionShape2D.new()
 	var shape = RectangleShape2D.new()
 	shape.size = Vector2(16, 16)
 	collision.shape = shape
 	collectible.add_child(collision)
-	
+
 	# Connect collection signal with the collectible as a parameter
 	collectible.body_entered.connect(_on_collectible_collected.bind(collectible))
-	
+
 	return collectible
+
+
+func _create_door(target_room_type: RoomType) -> Node2D:
+	var door = Area2D.new()
+	door.name = "Door"
+
+	# Add visual representation
+	var sprite = Sprite2D.new()
+	sprite.texture = _create_colored_texture(Vector2(32, 64), Color.BLUE)
+	door.add_child(sprite)
+
+	# Add collision for interaction
+	var collision = CollisionShape2D.new()
+	var shape = RectangleShape2D.new()
+	shape.size = Vector2(32, 64)
+	collision.shape = shape
+	door.add_child(collision)
+	door.body_entered.connect(_on_door_entered.bind(target_room_type))
+
+	return door
+
+
+# Create a basic obstacle (can be overridden)
+func _create_obstacle() -> Node2D:
+	var obstacle = StaticBody2D.new()
+	obstacle.name = "Obstacle"
+
+	# Add visual representation
+	var sprite = Sprite2D.new()
+	sprite.texture = _create_colored_texture(Vector2(32, 32), Color.GRAY)
+	obstacle.add_child(sprite)
+
+	# Add collision
+	var collision = CollisionShape2D.new()
+	var shape = RectangleShape2D.new()
+	shape.size = Vector2(32, 32)
+	collision.shape = shape
+	obstacle.add_child(collision)
+
+	return obstacle
 
 
 # Handle collectible collection
@@ -146,6 +179,23 @@ func _on_collectible_collected(body, collectible):
 		print("Collectible collected!")
 		spawned_features.erase(collectible)
 		collectible.queue_free()
+
+
+# Handle door interaction to switch rooms
+func _on_door_entered(body, target_room_type: RoomType):
+	if body != player:
+		return  # Only allow player to enter the door
+
+	match target_room_type:
+		RoomType.BATTLE:
+			print("Entering Battle Room...")
+		RoomType.TREASURE:
+			print("Entering Treasure Room...")
+		_:
+			print("Unknown room type for door: ", target_room_type)
+			return
+
+	get_parent().load_room_by_type(target_room_type)
 
 
 # Create a simple colored texture for basic features

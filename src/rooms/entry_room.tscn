@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://b2ld3cwirdkkq"]
+
+[ext_resource type="Script" uid="uid://cf3nhtp4o6slb" path="res://src/rooms/entry_room.gd" id="1_rp8qo"]
+[ext_resource type="PackedScene" uid="uid://d3iwnpjnk7a1g" path="res://src/player/player.tscn" id="2_f7dum"]
+
+[node name="EntryRoom" type="TileMapLayer"]
+script = ExtResource("1_rp8qo")
+
+[node name="Player" parent="." instance=ExtResource("2_f7dum")]
+position = Vector2(325, 181)

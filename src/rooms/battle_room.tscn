@@ -3,7 +3,6 @@
 [ext_resource type="PackedScene" uid="uid://d3iwnpjnk7a1g" path="res://src/player/player.tscn" id="1_player"]
 [ext_resource type="Script" uid="uid://nl6s0k2psg3j" path="res://src/rooms/battle_room.gd" id="2_battle_room_script"]
 
-
 [node name="BattleRoom" type="TileMapLayer"]
 script = ExtResource("2_battle_room_script")
 
