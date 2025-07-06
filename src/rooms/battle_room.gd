@@ -1,31 +1,26 @@
-extends Room
-
 # BattleRoom - A room type focused on combat encounters
 # Spawns enemies, obstacles, and health packs
 
-class_name BattleRoom
+class_name BattleRoom extends Room
 
 # Battle room specific configuration
 @export var enemy_count: int = 3
 @export var obstacle_count: int = 2
 @export var health_pack_count: int = 1
 
+
 func _ready():
 	room_type = RoomType.BATTLE
 	super._ready()
 
+
 # Override feature spawning for battle-specific logic
 func _spawn_room_features():
 	print("BattleRoom spawning combat features...")
-	
-	# Spawn enemies
 	_spawn_enemies()
-	
-	# Spawn obstacles for cover/tactical gameplay
 	_spawn_obstacles()
-	
-	# Spawn health packs
 	_spawn_health_packs()
+
 
 func _spawn_enemies():
 	print("Spawning ", enemy_count, " enemies")
@@ -34,6 +29,7 @@ func _spawn_enemies():
 			var spawn_pos = _get_random_spawn_point()
 			_spawn_feature(FeatureType.ENEMY, spawn_pos)
 
+
 func _spawn_obstacles():
 	print("Spawning ", obstacle_count, " obstacles")
 	for i in range(obstacle_count):
@@ -41,12 +37,14 @@ func _spawn_obstacles():
 			var spawn_pos = _get_random_spawn_point()
 			_spawn_feature(FeatureType.OBSTACLE, spawn_pos)
 
+
 func _spawn_health_packs():
 	print("Spawning ", health_pack_count, " health packs")
 	for i in range(health_pack_count):
 		if feature_spawn_points.size() > 0:
 			var spawn_pos = _get_random_spawn_point()
 			_spawn_feature(FeatureType.HEALTH_PACK, spawn_pos)
+
 
 # Override feature creation for battle-specific features
 func _create_feature(feature_type: FeatureType) -> Node2D:
@@ -59,7 +57,7 @@ func _create_feature(feature_type: FeatureType) -> Node2D:
 			# Fall back to base class for common features
 			return super._create_feature(feature_type)
 
-# Create an enemy
+
 func _create_enemy() -> Node2D:
 	var enemy = Enemy.new()
 	enemy.name = "Enemy"
@@ -82,7 +80,7 @@ func _create_enemy() -> Node2D:
 	
 	return enemy
 
-# Create a health pack
+
 func _create_health_pack() -> Node2D:
 	var health_pack = Area2D.new()
 	health_pack.name = "HealthPack"
@@ -104,6 +102,7 @@ func _create_health_pack() -> Node2D:
 	
 	return health_pack
 
+
 # Create a health pack texture (green with white cross)
 func _create_health_pack_texture() -> ImageTexture:
 	var image = Image.create(20, 20, false, Image.FORMAT_RGB8)
@@ -120,12 +119,14 @@ func _create_health_pack_texture() -> ImageTexture:
 	var texture = ImageTexture.create_from_image(image)
 	return texture
 
+
 # Handle health pack collection
 func _on_health_pack_collected(body, health_pack):
 	if body == player and health_pack in spawned_features:
 		print("Health pack collected! Player healed.")
 		spawned_features.erase(health_pack)
 		health_pack.queue_free()
+
 
 # Override room setup for battle-specific configuration
 func _setup_room():

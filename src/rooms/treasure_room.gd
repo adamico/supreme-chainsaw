@@ -1,37 +1,28 @@
-extends Room
-
 # TreasureRoom - A room type focused on exploration and collection
 # Spawns treasure chests, collectibles, and special items
 
-class_name TreasureRoom
+class_name TreasureRoom extends Room
 
-# Treasure room specific configuration
 @export var treasure_chest_count: int = 2
 @export var collectible_count: int = 5
 @export var special_item_count: int = 1
 
-# Treasure values for scoring/progression
 var total_treasure_value: int = 0
 var collected_treasure_value: int = 0
+
 
 func _ready():
 	room_type = RoomType.TREASURE
 	super._ready()
 
-# Override feature spawning for treasure-specific logic
+
 func _spawn_room_features():
 	print("TreasureRoom spawning treasure features...")
-	
-	# Spawn treasure chests (high value items)
 	_spawn_treasure_chests()
-	
-	# Spawn collectibles (coins, gems, etc.)
 	_spawn_collectibles()
-	
-	# Spawn special items (unique/rare items)
 	_spawn_special_items()
-	
 	print("Total treasure value in room: ", total_treasure_value)
+
 
 func _spawn_treasure_chests():
 	print("Spawning ", treasure_chest_count, " treasure chests")
@@ -40,12 +31,14 @@ func _spawn_treasure_chests():
 			var spawn_pos = _get_random_spawn_point()
 			_spawn_feature(FeatureType.TREASURE_CHEST, spawn_pos)
 
+
 func _spawn_collectibles():
 	print("Spawning ", collectible_count, " collectibles")
 	for i in range(collectible_count):
 		if feature_spawn_points.size() > 0:
 			var spawn_pos = _get_random_spawn_point()
 			_spawn_feature(FeatureType.COLLECTIBLE, spawn_pos)
+
 
 func _spawn_special_items():
 	print("Spawning ", special_item_count, " special items")
@@ -54,6 +47,7 @@ func _spawn_special_items():
 			var spawn_pos = _get_random_spawn_point()
 			# Special items use a custom feature type
 			_spawn_special_item(spawn_pos)
+
 
 # Override feature creation for treasure-specific features
 func _create_feature(feature_type: FeatureType) -> Node2D:
@@ -66,7 +60,8 @@ func _create_feature(feature_type: FeatureType) -> Node2D:
 			# Fall back to base class for common features
 			return super._create_feature(feature_type)
 
-# Create a treasure chest
+
+
 func _create_treasure_chest() -> Node2D:
 	var chest = Area2D.new()
 	chest.name = "TreasureChest"
@@ -93,7 +88,8 @@ func _create_treasure_chest() -> Node2D:
 	
 	return chest
 
-# Create enhanced collectible for treasure room
+
+
 func _create_treasure_collectible() -> Node2D:
 	var collectible = Area2D.new()
 	collectible.name = "TreasureCollectible"
@@ -134,7 +130,7 @@ func _create_treasure_collectible() -> Node2D:
 	
 	return collectible
 
-# Spawn a special item with unique properties
+
 func _spawn_special_item(spawn_position: Vector2):
 	var special_item = Area2D.new()
 	special_item.name = "SpecialItem"
@@ -170,7 +166,7 @@ func _spawn_special_item(spawn_position: Vector2):
 	# Connect collection signal with the special item as a parameter
 	special_item.body_entered.connect(_on_special_item_collected.bind(special_item))
 
-# Get value for different collectible types
+
 func _get_collectible_value(type: String) -> int:
 	match type:
 		"coin":
@@ -182,7 +178,7 @@ func _get_collectible_value(type: String) -> int:
 		_:
 			return 10
 
-# Create a chest texture
+
 func _create_chest_texture() -> ImageTexture:
 	var image = Image.create(32, 24, false, Image.FORMAT_RGB8)
 	image.fill(Color(0.6, 0.4, 0.2))  # Brown color
@@ -195,7 +191,7 @@ func _create_chest_texture() -> ImageTexture:
 	var texture = ImageTexture.create_from_image(image)
 	return texture
 
-# Create a special item texture with gradient effect
+
 func _create_special_item_texture() -> ImageTexture:
 	var image = Image.create(20, 20, false, Image.FORMAT_RGB8)
 	
@@ -211,7 +207,7 @@ func _create_special_item_texture() -> ImageTexture:
 	var texture = ImageTexture.create_from_image(image)
 	return texture
 
-# Handle treasure chest opening
+
 func _on_treasure_chest_opened(body, chest):
 	if body == player and chest in spawned_features:
 		var treasure_value = chest.get_meta("treasure_value", 0)
@@ -222,7 +218,7 @@ func _on_treasure_chest_opened(body, chest):
 		spawned_features.erase(chest)
 		chest.queue_free()
 
-# Handle regular treasure collection
+
 func _on_treasure_collected(body, treasure):
 	if body == player and treasure in spawned_features:
 		var treasure_value = treasure.get_meta("treasure_value", 0)
@@ -234,7 +230,7 @@ func _on_treasure_collected(body, treasure):
 		spawned_features.erase(treasure)
 		treasure.queue_free()
 
-# Handle special item collection
+
 func _on_special_item_collected(body, item):
 	if body == player and item in spawned_features:
 		var treasure_value = item.get_meta("treasure_value", 0)
@@ -251,9 +247,11 @@ func _setup_room():
 	# Could add treasure-specific room modifications here
 	# For example: golden lighting, sparkle effects, etc.
 
+
 # Public method to check if all treasure has been collected
 func is_treasure_room_complete() -> bool:
 	return collected_treasure_value >= total_treasure_value
+
 
 # Public method to get collection progress
 func get_collection_progress() -> float:

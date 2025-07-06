@@ -1,19 +1,17 @@
-extends CharacterBody2D
-
 # Simple enemy AI for BattleRoom
 # Follows the player when within detection range
-
-class_name Enemy
+class_name Enemy extends CharacterBody2D
 
 var speed = 50.0
 var player_ref = null
 var detection_range = 150.0
 
+
 func _ready():
-	# Find player reference
 	var room = get_parent()
 	if room and room.has_method("get_spawned_features"):
 		player_ref = room.player
+
 
 func _physics_process(_delta):
 	if not player_ref:
@@ -28,6 +26,7 @@ func _physics_process(_delta):
 		move_and_slide()
 	else:
 		velocity = Vector2.ZERO
+
 
 # Public method to set player reference manually
 func set_player_reference(player: CharacterBody2D):

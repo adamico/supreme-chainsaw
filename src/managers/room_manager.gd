@@ -1,13 +1,10 @@
-extends Node2D
-
 # RoomManager - Handles switching between different room types
 # This demonstrates the extensible room system
-
-class_name RoomManager
+class_name RoomManager extends Node2D
 
 # Room scene resources
-const BATTLE_ROOM_SCENE = preload("res://battle_room.tscn")
-const TREASURE_ROOM_SCENE = preload("res://treasure_room.tscn")
+const BATTLE_ROOM_SCENE = preload("res://src/rooms/battle_room.tscn")
+const TREASURE_ROOM_SCENE = preload("res://src/rooms/treasure_room.tscn")
 
 # Current room instance
 var current_room: Room = null
@@ -19,7 +16,7 @@ var current_room: Room = null
 func _ready():
 	print("RoomManager initialized")
 	_load_random_room()
-	
+
 	if auto_switch_rooms:
 		_start_room_switching_timer()
 
@@ -35,7 +32,7 @@ func load_room_by_type(room_type: Room.RoomType):
 	if current_room:
 		current_room.queue_free()
 		current_room = null
-	
+
 	# Load new room scene based on type
 	var room_scene: PackedScene
 	match room_type:
@@ -48,12 +45,12 @@ func load_room_by_type(room_type: Room.RoomType):
 		_:
 			print("Unknown room type: ", room_type)
 			return
-	
+
 	# Instantiate and add the new room
 	var room_instance = room_scene.instantiate()
 	add_child(room_instance)
 	current_room = room_instance
-	
+
 	print("Room loaded successfully: ", Room.RoomType.keys()[room_type])
 
 # Start automatic room switching timer

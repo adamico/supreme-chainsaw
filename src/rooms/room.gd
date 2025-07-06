@@ -17,16 +17,13 @@ enum FeatureType {
 	HEALTH_PACK
 }
 
-# Room configuration
 @export var room_type: RoomType = RoomType.BATTLE
 @export var room_size: Vector2 = Vector2(640, 360)
 @export var max_features: int = 5
 
-# Feature tracking
 var spawned_features: Array[Node2D] = []
 var feature_spawn_points: Array[Vector2] = []
 
-# References
 @onready var player: CharacterBody2D = $Player
 
 
