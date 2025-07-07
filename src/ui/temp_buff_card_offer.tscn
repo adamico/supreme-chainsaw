@@ -1,0 +1,104 @@
+[gd_scene load_steps=3 format=3 uid="uid://rh1e60ij5pb"]
+
+[ext_resource type="Script" uid="uid://jjom1mhxuewt" path="res://src/ui/temp_buff_card_offer.gd" id="1_b83ao"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_68s02"]
+
+[node name="TempBuffCardOffer" type="Panel"]
+custom_minimum_size = Vector2(180, 210)
+script = ExtResource("1_b83ao")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="CardTypeLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "🕰️ Temporary Buff"
+fit_content = true
+
+[node name="CardEffectsContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 6
+
+[node name="SacrificeContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/CardEffectsContainer"]
+layout_mode = 2
+
+[node name="SacrificeIcon" type="RichTextLabel" parent="MarginContainer/VBoxContainer/CardEffectsContainer/SacrificeContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+bbcode_enabled = true
+text = "💔"
+fit_content = true
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SacrificeText" type="RichTextLabel" parent="MarginContainer/VBoxContainer/CardEffectsContainer/SacrificeContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+bbcode_enabled = true
+text = "[color=red]-20 HP[/color]"
+fit_content = true
+vertical_alignment = 1
+
+[node name="OfferContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/CardEffectsContainer"]
+layout_mode = 2
+
+[node name="OfferIcon" type="RichTextLabel" parent="MarginContainer/VBoxContainer/CardEffectsContainer/OfferContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+bbcode_enabled = true
+text = "⚔️"
+fit_content = true
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OfferText" type="RichTextLabel" parent="MarginContainer/VBoxContainer/CardEffectsContainer/OfferContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+bbcode_enabled = true
+text = "+5 DMG"
+fit_content = true
+vertical_alignment = 1
+
+[node name="DurationContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/CardEffectsContainer"]
+layout_mode = 2
+
+[node name="DurationSpacer" type="VSeparator" parent="MarginContainer/VBoxContainer/CardEffectsContainer/DurationContainer"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxEmpty_68s02")
+
+[node name="DurationText" type="RichTextLabel" parent="MarginContainer/VBoxContainer/CardEffectsContainer/DurationContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+bbcode_enabled = true
+text = "[font_size=12]for 3 battle rooms[/font_size]"
+fit_content = true
+vertical_alignment = 1
+
+[node name="TempBuffAcceptButton" type="Button" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "Accept"

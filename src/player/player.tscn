@@ -1,11 +1,13 @@
-[gd_scene load_steps=3 format=3 uid="uid://d3iwnpjnk7a1g"]
+[gd_scene load_steps=4 format=3 uid="uid://d3iwnpjnk7a1g"]
 
 [ext_resource type="Script" uid="uid://0rrfyid6xjj6" path="res://src/player/player.gd" id="1_4flbx"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_onrkg"]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_4anbu"]
+radius = 20.0
+
 [node name="Player" type="CharacterBody2D" groups=["players"]]
-collision_layer = 3
 script = ExtResource("1_4flbx")
 max_health = 100
 memory_shards = 1
@@ -16,3 +18,10 @@ memory_shards = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_onrkg")
+
+[node name="InteractionArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionArea"]
+shape = SubResource("CircleShape2D_4anbu")

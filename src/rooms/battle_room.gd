@@ -80,7 +80,6 @@ func _create_health_pack() -> Node2D:
 
 	# Connect collection signal with the health pack as a parameter
 	health_pack.body_entered.connect(_on_health_pack_collected.bind(health_pack))
-
 	return health_pack
 
 
@@ -102,7 +101,7 @@ func _create_health_pack_texture() -> ImageTexture:
 
 
 # Handle health pack collection
-func _on_health_pack_collected(body, health_pack):
+func _on_health_pack_collected(body: Node2D, health_pack: Node2D) -> void:
 	if body == player and health_pack in spawned_features:
 		print("Health pack collected! Player healed.")
 		spawned_features.erase(health_pack)

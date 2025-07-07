@@ -1,0 +1,104 @@
+[gd_scene load_steps=3 format=3 uid="uid://dev0wtajxeexp"]
+
+[ext_resource type="Script" uid="uid://crvlusq54oha" path="res://src/ui/perm_buff_card_offer.gd" id="1_1wsf3"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_1wsf3"]
+
+[node name="PermBuffCardOffer" type="Panel"]
+custom_minimum_size = Vector2(180, 210)
+script = ExtResource("1_1wsf3")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="CardTypeLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "🔗 Permanent Buff"
+fit_content = true
+
+[node name="CardEffectsContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 6
+
+[node name="SacrificeContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/CardEffectsContainer"]
+layout_mode = 2
+
+[node name="SacrificeIcon" type="RichTextLabel" parent="MarginContainer/VBoxContainer/CardEffectsContainer/SacrificeContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+bbcode_enabled = true
+text = "🧩"
+fit_content = true
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SacrificeText" type="RichTextLabel" parent="MarginContainer/VBoxContainer/CardEffectsContainer/SacrificeContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+bbcode_enabled = true
+text = "[color=lime]1 Memory Shard[/color]"
+fit_content = true
+vertical_alignment = 1
+
+[node name="OfferContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/CardEffectsContainer"]
+layout_mode = 2
+
+[node name="OfferIcon" type="RichTextLabel" parent="MarginContainer/VBoxContainer/CardEffectsContainer/OfferContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+bbcode_enabled = true
+text = "❤️‍🩹"
+fit_content = true
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OfferText" type="RichTextLabel" parent="MarginContainer/VBoxContainer/CardEffectsContainer/OfferContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+bbcode_enabled = true
+text = "[color=red]+5 MAX HP[/color]"
+fit_content = true
+vertical_alignment = 1
+
+[node name="MemoryContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/CardEffectsContainer"]
+layout_mode = 2
+
+[node name="MemorySpacer" type="VSeparator" parent="MarginContainer/VBoxContainer/CardEffectsContainer/MemoryContainer"]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/separator = SubResource("StyleBoxEmpty_1wsf3")
+
+[node name="MemoryText" type="RichTextLabel" parent="MarginContainer/VBoxContainer/CardEffectsContainer/MemoryContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+bbcode_enabled = true
+text = "[font_size=12]but lose a [color=lime]memory[/color][/font_size]"
+fit_content = true
+vertical_alignment = 1
+
+[node name="PermBuffAcceptButton" type="Button" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "Accept"

@@ -15,12 +15,19 @@ enum PlayerState {
 @export var friction: float = 1000.0
 
 # Player stats
-@export var max_health: int
+@export var max_health: int:
+	set(value):
+		var current_max_health = max_health
+		max_health = max(value, 1)
+		print("Player max health set to: ", max_health)
+		# increase current health by the same amount
+		health += (max_health - current_max_health)
+
 @export var health: int:
 	set(value):
 		health = clamp(value, 0, max_health)
 		print("Player health changed to: ", health)
-		EventBus.player_health_changed.emit(health)
+		EventBus.player_health_changed.emit(health, max_health)
 
 @export var experience: int:
 	set(value):
@@ -41,12 +48,13 @@ var input_vector: Vector2 = Vector2.ZERO
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var interaction_area: Area2D = $InteractionArea
 
 
 func _ready() -> void:
 	# Initialize player stats
-	health = 30
-	experience = 0
+	health = 100
+	experience = 50
 	memory_shards = 1
 	_change_state(PlayerState.IDLE)
 	print("Player initialized")
@@ -178,12 +186,16 @@ func _perform_interact():
 func _check_for_interactables() -> void:
 	print("Checking for nearby interactable objects...")
 
-	# Placeholder for interaction logic
-	# In a real game, you might:
-	# 1. Use get_overlapping_bodies() on an Area2D
-	# 2. Raycast in the facing direction
-	# 3. Check distance to known interactable objects
-	# 4. Show interaction prompts to the player
+	var interactables = interaction_area.get_overlapping_bodies()
+	if interactables.size() == 0:
+		print("No interactable objects nearby.")
+		return
+	else:
+		for body in interactables:
+			if body.has_method("interact"):
+				body.interact()
+			else:
+				print("Interactable does not have an interact method: ", body.name)
 
 
 # Public method to get current player state (useful for other systems)

@@ -2,17 +2,22 @@ class_name PlayerStats extends Control
 
 @onready var experience_value: RichTextLabel = %ExperienceValue
 @onready var health_value: RichTextLabel = %HealthValue
+@onready var memory_shards_value: RichTextLabel = %MemoryShardsValue
 
 
 func _ready() -> void:
-	# Connect signals to update stats when player health or experience changes
 	EventBus.player_health_changed.connect(update_health)
 	EventBus.player_experience_changed.connect(update_experience)
+	EventBus.player_memory_shards_changed.connect(update_memory_shards)
 
 
-func update_health(health: int) -> void:
-	health_value.bbcode_text = "[color=white]HP: [color=red]" + str(health)
+func update_health(health: int, max_health: int) -> void:
+	health_value.bbcode_text = "[color=white]HP: [color=red]" + str(health) + "/" + str(max_health) + "[/color]"
 
 
 func update_experience(experience: int) -> void:
 	experience_value.bbcode_text = "[color=white]XP: [color=green]" + str(experience)
+
+
+func update_memory_shards(memory_shards: int) -> void:
+	memory_shards_value.bbcode_text = "[color=white]MS: [color=blue]" + str(memory_shards)

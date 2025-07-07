@@ -16,7 +16,7 @@ enum FeatureType {
 	ENEMY,
 	HEALTH_PACK,
 	OBSTACLE,
-	TREASURE_CHEST,
+	SACRIFICE_SHRINE,
 }
 
 @export var room_type: RoomType = RoomType.BATTLE
