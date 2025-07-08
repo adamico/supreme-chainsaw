@@ -112,7 +112,6 @@ func _change_state(new_state: PlayerState):
 	_exit_state(current_state)
 
 	current_state = new_state
-	print("Player state changed to: ", PlayerState.keys()[current_state])
 
 	_enter_state(new_state)
 
@@ -124,7 +123,7 @@ func _enter_state(state: PlayerState):
 		PlayerState.MOVING:
 			pass
 		PlayerState.INTERACTING:
-			print("Player is interacting!")
+			pass
 
 
 func _exit_state(state: PlayerState):

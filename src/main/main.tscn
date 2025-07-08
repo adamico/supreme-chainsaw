@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://bqk7w5x3kamp1"]
+
+[ext_resource type="Script" uid="uid://dbh3odfg15b8a" path="res://src/main/game_manager.gd" id="1_ab7mr"]
+[ext_resource type="Script" uid="uid://b160jd1phs4y" path="res://src/managers/room_manager.gd" id="2_djufw"]
+[ext_resource type="PackedScene" uid="uid://pgevhmq3ljqt" path="res://src/ui/player_stats.tscn" id="3_jkpqq"]
+
+[node name="Main" type="Node2D"]
+
+[node name="GameManager" type="Node2D" parent="."]
+script = ExtResource("1_ab7mr")
+
+[node name="RoomManager" type="Node2D" parent="."]
+script = ExtResource("2_djufw")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="PlayerStats" parent="CanvasLayer" instance=ExtResource("3_jkpqq")]
+unique_name_in_owner = true
+
+[node name="SacrificeShrineLayer" type="CanvasLayer" parent="."]
+unique_name_in_owner = true
