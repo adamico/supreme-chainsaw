@@ -18,3 +18,4 @@ mono_crash.*.json
 # Build artifacts (CI generated)
 build/
 *.tmp
+.vscode/settings.json
