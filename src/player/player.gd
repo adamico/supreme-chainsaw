@@ -6,7 +6,8 @@ class_name Player extends CharacterBody2D
 enum PlayerState {
 	IDLE,
 	MOVING,
-	INTERACTING
+	INTERACTING,
+	ATTACKING
 }
 
 # Player Movement stats
@@ -41,12 +42,17 @@ enum PlayerState {
 		print("Player memory shards changed to: ", memory_shards)
 		EventBus.player_memory_shards_changed.emit(memory_shards)
 
-@export var damage: float = 10.0
+@export var attack_rate: float:
+	set(value):
+		attack_rate = max(value, 0.1)  # Ensure attack rate is not too low
+		print("Player attack rate set to: ", attack_rate)
+		EventBus.player_attack_rate_changed.emit(attack_rate)
 
-var current_state: PlayerState = PlayerState.IDLE
-var input_vector: Vector2 = Vector2.ZERO
+var _current_state: PlayerState = PlayerState.IDLE
+var _input_vector: Vector2 = Vector2.ZERO
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var attack_cooldown: Timer = %AttackCooldown
 @onready var interaction_area: Area2D = %InteractionArea
 @onready var sprite_pivot: Marker2D = %SpritePivot
 
@@ -56,12 +62,13 @@ func _ready() -> void:
 	health = 100
 	experience = 50
 	memory_shards = 1
+	attack_rate = 0.8
 	_change_state(PlayerState.IDLE)
 	print("Player initialized")
 
 
 func _physics_process(delta) -> void:
-	input_vector = Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	_input_vector = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	_handle_input()
 	_handle_movement(delta)
 	_update_state_machine(delta)
@@ -72,14 +79,16 @@ func _physics_process(delta) -> void:
 func _handle_input() -> void:
 	if Input.is_action_just_pressed("interact"):
 		_perform_interact()
+	if Input.is_action_just_pressed("attack"):
+		_perform_attack()
 
 
 func _handle_movement(delta) -> void:
 	var target_velocity: Vector2
 	var velocity_rate: float
-	if input_vector != Vector2.ZERO:
+	if _input_vector != Vector2.ZERO:
 		velocity_rate = acceleration
-		target_velocity = input_vector * speed
+		target_velocity = _input_vector * speed
 	else:
 		velocity_rate = friction
 		target_velocity = Vector2.ZERO
@@ -88,31 +97,33 @@ func _handle_movement(delta) -> void:
 
 
 func _update_state_machine(_delta):
-	match current_state:
+	match _current_state:
 		PlayerState.IDLE:
-			if input_vector != Vector2.ZERO:
+			if _input_vector != Vector2.ZERO:
 				_change_state(PlayerState.MOVING)
 
 		PlayerState.MOVING:
-			if input_vector == Vector2.ZERO:
+			if _input_vector == Vector2.ZERO:
 				_change_state(PlayerState.IDLE)
 
 		PlayerState.INTERACTING:
 			await get_tree().create_timer(0.5).timeout
-			if input_vector != Vector2.ZERO:
+			if _input_vector != Vector2.ZERO:
 				_change_state(PlayerState.MOVING)
 			else:
 				_change_state(PlayerState.IDLE)
 
+		PlayerState.ATTACKING:
+			if attack_cooldown.is_stopped():
+				_change_state(PlayerState.IDLE)
+
 
 func _change_state(new_state: PlayerState):
-	if current_state == new_state:
+	if _current_state == new_state:
 		return
 
-	_exit_state(current_state)
-
-	current_state = new_state
-
+	_exit_state(_current_state)
+	_current_state = new_state
 	_enter_state(new_state)
 
 
@@ -123,7 +134,15 @@ func _enter_state(state: PlayerState):
 		PlayerState.MOVING:
 			pass
 		PlayerState.INTERACTING:
-			pass
+			_play_animation("interact")
+		PlayerState.ATTACKING:
+			if velocity.x > 0:
+				_play_animation("attacking_right")
+			elif velocity.x < 0:
+				_play_animation("attacking_left")
+			else:
+				_play_animation("attacking_vertical")
+			attack_cooldown.start(attack_rate)
 
 
 func _exit_state(state: PlayerState):
@@ -134,13 +153,15 @@ func _exit_state(state: PlayerState):
 			pass
 		PlayerState.INTERACTING:
 			pass
+		PlayerState.ATTACKING:
+			pass
 
 
 func _update_sprite_animation():
 	if not sprite_pivot:
 		return
 
-	match current_state:
+	match _current_state:
 		PlayerState.IDLE:
 			animation_player.speed_scale = 1.0
 			_play_animation("idle")
@@ -153,13 +174,16 @@ func _update_sprite_animation():
 		PlayerState.MOVING:
 			animation_player.speed_scale = 2.0
 			_play_animation("walking")
-			if input_vector.x > 0:
+			if _input_vector.x > 0:
 				sprite_pivot.scale.x = 2
-			elif input_vector.x < 0:
+			elif _input_vector.x < 0:
 				sprite_pivot.scale.x = -2
 
 		PlayerState.INTERACTING:
-			_play_animation("interact")
+			pass
+
+		PlayerState.ATTACKING:
+			pass
 
 
 func _play_animation(animation_name: String):
@@ -171,7 +195,7 @@ func _play_animation(animation_name: String):
 func _perform_interact():
 	print("Interact action triggered!")
 
-	if current_state != PlayerState.INTERACTING:
+	if _current_state != PlayerState.INTERACTING:
 		_change_state(PlayerState.INTERACTING)
 
 	# Here you can add specific interaction logic:
@@ -183,6 +207,16 @@ func _perform_interact():
 
 	# Example: Look for interactable objects in range
 	_check_for_interactables()
+
+
+func _perform_attack():
+	if not attack_cooldown.is_stopped():
+		print("Attack is on cooldown. Please wait.")
+		return
+
+	if _current_state != PlayerState.ATTACKING:
+		print("Performing attack action!")
+		_change_state(PlayerState.ATTACKING)
 
 
 func _check_for_interactables() -> void:
@@ -202,17 +236,17 @@ func _check_for_interactables() -> void:
 
 # Public method to get current player state (useful for other systems)
 func get_current_state() -> PlayerState:
-	return current_state
+	return _current_state
 
 
 # Public method to check if player is moving
 func is_moving() -> bool:
-	return current_state == PlayerState.MOVING
+	return _current_state == PlayerState.MOVING
 
 
 # Public method to check if player can interact
 func can_interact() -> bool:
-	return current_state != PlayerState.INTERACTING
+	return _current_state != PlayerState.INTERACTING
 
 
 # Public method to force state change (useful for cutscenes, etc.)

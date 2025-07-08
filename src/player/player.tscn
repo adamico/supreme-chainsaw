@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://d3iwnpjnk7a1g"]
+[gd_scene load_steps=12 format=3 uid="uid://d3iwnpjnk7a1g"]
 
 [ext_resource type="Script" uid="uid://0rrfyid6xjj6" path="res://src/player/player.gd" id="1_4flbx"]
 [ext_resource type="Texture2D" uid="uid://ccgh84qmwlwv" path="res://assets/roguelikeChar_transparent.png" id="2_rxibo"]
@@ -44,6 +44,18 @@ tracks/2/keys = {
 "update": 0,
 "values": [0.0]
 }
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SpritePivot/WeaponSprite:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
 
 [sub_resource type="Animation" id="Animation_mf2ua"]
 length = 0.001
@@ -83,6 +95,18 @@ tracks/2/keys = {
 "update": 0,
 "values": [0.0]
 }
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SpritePivot/WeaponSprite:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
 
 [sub_resource type="Animation" id="Animation_244u8"]
 resource_name = "walking"
@@ -101,10 +125,100 @@ tracks/0/keys = {
 "update": 0,
 "values": [0.0, 0.0, -0.0872665, 0.0, 0.0872665]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SpritePivot/WeaponSprite:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_5f2sf"]
+resource_name = "attacking"
+length = 0.4
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SpritePivot/WeaponSprite:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SpritePivot:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, 0.523599, 0.0]
+}
+
+[sub_resource type="Animation" id="Animation_jiejy"]
+resource_name = "attacking_left"
+length = 0.4
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SpritePivot/WeaponSprite:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SpritePivot:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, -0.523599, 0.0]
+}
+
+[sub_resource type="Animation" id="Animation_o822w"]
+resource_name = "attacking_vertical"
+length = 0.4
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SpritePivot/WeaponSprite:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_244u8"]
 _data = {
 &"RESET": SubResource("Animation_mf2ua"),
+&"attacking_left": SubResource("Animation_jiejy"),
+&"attacking_right": SubResource("Animation_5f2sf"),
+&"attacking_vertical": SubResource("Animation_o822w"),
 &"idle": SubResource("Animation_rxibo"),
 &"walking": SubResource("Animation_244u8")
 }
@@ -124,7 +238,6 @@ memory_shards = 1
 libraries = {
 &"": SubResource("AnimationLibrary_244u8")
 }
-autoplay = "idle"
 
 [node name="InteractionArea" type="Area2D" parent="."]
 unique_name_in_owner = true
@@ -179,3 +292,7 @@ region_rect = Rect2(816, 153, 16, 16)
 visible = false
 position = Vector2(0, -8)
 shape = SubResource("CircleShape2D_rxibo")
+
+[node name="AttackCooldown" type="Timer" parent="."]
+unique_name_in_owner = true
+one_shot = true
