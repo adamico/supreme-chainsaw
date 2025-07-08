@@ -1,38 +1,18 @@
 class_name HurtBoxComponent extends Area2D
 
-signal died
+signal hit_received(damage: int)
 
-@export var health:= 30.0:
-	set(value):
-		health = value
-		if health <= 0:
-			died.emit()
-
-var _is_invulnerable: bool = false:
+var _is_invulnerable:= false:
 	set(value):
 		_is_invulnerable = value
-		if _is_invulnerable:
-			print("HurtBoxComponent is now invulnerable")
-			monitoring = false  # Stop monitoring collisions when invulnerable
-		else:
-			monitoring = true  # Resume monitoring collisions when not invulnerable
-			print("HurtBoxComponent is no longer invulnerable")
-
-@onready var invuln_timer: Timer = $InvulnTimer
+		set_deferred("disabled", _is_invulnerable)
 
 
-func _ready() -> void:
-	print("HurtBoxComponent is ready")
-	body_entered.connect(_on_body_entered)
-	invuln_timer.timeout.connect(func(): _is_invulnerable = false)
-
-
-func _on_body_entered(body: Node) -> void:
-	if not body.damage:
-		print("HurtBoxComponent: body %s is not a valid damage source", body.name)
+func take_hit_from(hitbox: HitBoxComponent) -> void:
+	if _is_invulnerable:
+		print("HurtBoxComponent is invulnerable, ignoring hit from", hitbox.name)
 		return
 
-	print("HurtBoxComponent: Body entered -", body.name)
-	print("Damage received:", body.damage)
-	health -= body.damage
-	invuln_timer.start()
+
+	print("HurtBoxComponent: Hit received from", hitbox.name, "with damage:", hitbox.damage)
+	hit_received.emit(hitbox.damage)

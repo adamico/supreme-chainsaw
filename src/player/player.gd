@@ -2,6 +2,8 @@
 # This script controls the player character's movement, state management, and interactions.
 class_name Player extends CharacterBody2D
 
+const AXE_ATTACK_SCENE = preload("res://src/player/attacks/axe_attack.tscn")
+
 # State enum for state machine
 enum PlayerState {
 	IDLE,
@@ -50,11 +52,13 @@ enum PlayerState {
 
 var _current_state: PlayerState = PlayerState.IDLE
 var _input_vector: Vector2 = Vector2.ZERO
+var _shooting_direction: Vector2 = Vector2.RIGHT
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var attack_cooldown: Timer = %AttackCooldown
 @onready var interaction_area: Area2D = %InteractionArea
 @onready var sprite_pivot: Marker2D = %SpritePivot
+@onready var attack_origin: Marker2D = %AttackOrigin
 
 
 func _ready() -> void:
@@ -69,8 +73,12 @@ func _ready() -> void:
 
 func _physics_process(delta) -> void:
 	_input_vector = Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	_handle_input()
+	# use the last non zero input vector for the shooting direction when not moving
+	if _input_vector != Vector2.ZERO:
+		_shooting_direction = _input_vector
+
 	_handle_movement(delta)
+	_handle_input()
 	_update_state_machine(delta)
 	_update_sprite_animation()
 	move_and_slide()
@@ -136,13 +144,14 @@ func _enter_state(state: PlayerState):
 		PlayerState.INTERACTING:
 			_play_animation("interact")
 		PlayerState.ATTACKING:
-			if velocity.x > 0:
+			if _shooting_direction.x > 0:
 				_play_animation("attacking_right")
-			elif velocity.x < 0:
+			elif _shooting_direction.x < 0:
 				_play_animation("attacking_left")
 			else:
 				_play_animation("attacking_vertical")
-			attack_cooldown.start(attack_rate)
+			_spawn_attack(_shooting_direction)
+			attack_cooldown.start(attack_rate)  # Start cooldown after attack
 
 
 func _exit_state(state: PlayerState):
@@ -184,6 +193,18 @@ func _update_sprite_animation():
 
 		PlayerState.ATTACKING:
 			pass
+
+
+func _spawn_attack(shooting_direction: Vector2):
+	if not attack_origin:
+		print("Attack origin marker not found!")
+		return
+
+	var attack_instance = AXE_ATTACK_SCENE.instantiate()
+	attack_instance.global_position = attack_origin.global_position
+	attack_instance.direction = shooting_direction.normalized()
+	get_tree().current_scene.add_child(attack_instance)
+	reset_physics_interpolation()
 
 
 func _play_animation(animation_name: String):

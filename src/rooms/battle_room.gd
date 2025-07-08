@@ -76,6 +76,7 @@ func _create_health_pack() -> Node2D:
 	var shape = RectangleShape2D.new()
 	shape.size = Vector2(20, 20)
 	collision.shape = shape
+	health_pack.collision_mask = 2
 	health_pack.add_child(collision)
 
 	# Connect collection signal with the health pack as a parameter

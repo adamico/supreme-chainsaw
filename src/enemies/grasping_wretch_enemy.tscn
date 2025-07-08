@@ -16,8 +16,8 @@ shape = SubResource("RectangleShape2D_6t1wc")
 
 [node name="HurtBoxComponent" type="Area2D" parent="."]
 unique_name_in_owner = true
-collision_layer = 0
-collision_mask = 2
+collision_layer = 4
+collision_mask = 0
 script = ExtResource("2_pi86q")
 metadata/_custom_type_script = "uid://bihkcn5ihs8cn"
 

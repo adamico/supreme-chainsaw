@@ -230,6 +230,7 @@ radius = 33.0151
 radius = 8.0
 
 [node name="Player" type="CharacterBody2D" groups=["players"]]
+collision_layer = 2
 script = ExtResource("1_4flbx")
 max_health = 100
 memory_shards = 1
@@ -287,6 +288,11 @@ region_rect = Rect2(612, 68, 16, 16)
 texture = ExtResource("2_rxibo")
 region_enabled = true
 region_rect = Rect2(816, 153, 16, 16)
+
+[node name="AttackOrigin" type="Marker2D" parent="SpritePivot"]
+unique_name_in_owner = true
+position = Vector2(-6, -2.5)
+scale = Vector2(0.5, 0.5)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false

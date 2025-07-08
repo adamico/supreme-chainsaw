@@ -147,6 +147,7 @@ func _create_door(target_room_type: RoomType) -> Node2D:
 	var shape = RectangleShape2D.new()
 	shape.size = Vector2(32, 64)
 	collision.shape = shape
+	door.collision_mask = 2
 	door.add_child(collision)
 	door.body_entered.connect(_on_door_entered.bind(target_room_type))
 

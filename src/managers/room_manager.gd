@@ -68,10 +68,7 @@ func get_current_room() -> Room:
 
 # Handle input for manual room switching (for testing)
 func _input(event):
-	if event.is_action_pressed("ui_accept"):  # Enter key
-		print("Manual room switch triggered!")
-		_load_random_room()
-	elif event.is_action_pressed("ui_select"):  # Space key (if interact is taken)
+	if event.is_action_pressed("ui_select"):  # Space key (if interact is taken)
 		if current_room:
 			current_room.respawn_features()
 			print("Room features respawned!")

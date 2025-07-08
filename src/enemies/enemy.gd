@@ -2,6 +2,8 @@
 # Follows the player when within detection range
 class_name Enemy extends CharacterBody2D
 
+signal died
+
 # State enum for state machine
 enum EnemyState {
 	IDLE,
@@ -16,6 +18,11 @@ enum EnemyState {
 @export var walk_speed:= 50.0
 @export var dash_speed:= 300.0
 @export var experience_reward:= 10.0
+@export var health:= 30.0:
+	set(value):
+		health = value
+		if health <= 0:
+			died.emit()
 
 var current_speed:= 0.0
 var current_state: EnemyState = EnemyState.IDLE
@@ -36,7 +43,8 @@ func _ready() -> void:
 		print("Enemy initialized - Player reference:", player_ref)
 
 	_change_state(EnemyState.IDLE)
-	hurt_box.died.connect(_on_died)
+	died.connect(_on_died)
+	hurt_box.hit_received.connect(_on_hurt_box_hit_received)
 
 
 func _physics_process(delta) -> void:
@@ -118,12 +126,6 @@ func _exit_state(state: EnemyState):
 			pass
 
 
-func _on_died() -> void:
-	_give_experience()
-	_drop_loot()
-	queue_free()  # Remove enemy from the scene
-
-
 func _drop_loot() -> void:
 	print("Enemy died, dropping loot")
 	room.call_deferred(&"spawn_feature", Room.FeatureType.HEALTH_PACK, global_position)
@@ -134,3 +136,17 @@ func _give_experience() -> void:
 	if player_ref:
 		player_ref.experience += experience_reward
 		print("Player rewarded with", experience_reward, "experience")
+
+
+func _on_died() -> void:
+	_give_experience()
+	_drop_loot()
+	queue_free()  # Remove enemy from the scene
+
+
+func _on_hurt_box_hit_received(hit_damage: int) -> void:
+	if health <= 0:
+		return  # Prevent further processing if already dead
+
+	health -= hit_damage
+	print("HurtBoxComponent: Hit received, new health:", health)
