@@ -10,6 +10,7 @@
 script = ExtResource("1_ab7mr")
 
 [node name="RoomManager" type="Node2D" parent="."]
+y_sort_enabled = true
 script = ExtResource("2_djufw")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]

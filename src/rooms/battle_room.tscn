@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://nl6s0k2psg3j" path="res://src/rooms/battle_room.gd" id="2_battle_room_script"]
 
 [node name="BattleRoom" type="TileMapLayer"]
+y_sort_enabled = true
 script = ExtResource("2_battle_room_script")
 
 [node name="Player" parent="." instance=ExtResource("1_player")]

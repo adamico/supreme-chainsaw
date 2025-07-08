@@ -46,9 +46,9 @@ enum PlayerState {
 var current_state: PlayerState = PlayerState.IDLE
 var input_vector: Vector2 = Vector2.ZERO
 
-@onready var sprite: Sprite2D = $Sprite2D
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
-@onready var interaction_area: Area2D = $InteractionArea
+@onready var interaction_area: Area2D = %InteractionArea
+@onready var sprite_pivot: Marker2D = %SpritePivot
 
 
 func _ready() -> void:
@@ -137,23 +137,26 @@ func _exit_state(state: PlayerState):
 
 
 func _update_sprite_animation():
-	if not sprite:
+	if not sprite_pivot:
 		return
 
 	match current_state:
 		PlayerState.IDLE:
+			animation_player.speed_scale = 1.0
 			_play_animation("idle")
+			animation_player.advance(0)  # Ensure the animation is reset to the first frame
 			if velocity.x > 0:
-				sprite.flip_h = false
+				sprite_pivot.scale.x = 2
 			elif velocity.x < 0:
-				sprite.flip_h = true
+				sprite_pivot.scale.x = -2
 
 		PlayerState.MOVING:
-			_play_animation("walk")
+			animation_player.speed_scale = 2.0
+			_play_animation("walking")
 			if input_vector.x > 0:
-				sprite.flip_h = false
+				sprite_pivot.scale.x = 2
 			elif input_vector.x < 0:
-				sprite.flip_h = true
+				sprite_pivot.scale.x = -2
 
 		PlayerState.INTERACTING:
 			_play_animation("interact")
