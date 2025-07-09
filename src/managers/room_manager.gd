@@ -64,11 +64,3 @@ func switch_to_sacrifice_room():
 # Public method to get current room
 func get_current_room() -> Room:
 	return current_room
-
-
-# Handle input for manual room switching (for testing)
-func _input(event):
-	if event.is_action_pressed("ui_select"):  # Space key (if interact is taken)
-		if current_room:
-			current_room.respawn_features()
-			print("Room features respawned!")

@@ -8,7 +8,6 @@ var sacrifice_ui: Control
 
 func _ready() -> void:
 	print("GameManager initialized")
-
 	EventBus.card_offer_accepted.connect(_on_card_offer_accepted)
 	EventBus.player_activated_sacrifice_shrine.connect(_on_player_activated_sacrifice_shrine)
 	EventBus.player_entered_sacrifice_room.connect(_setup_sacrifice_shrine_ui)

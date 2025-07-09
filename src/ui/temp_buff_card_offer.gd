@@ -33,8 +33,8 @@ func _add_card_details() -> void:
 
 func _on_accept_pressed() -> void:
 	player.health -= health_cost
-	player.damage += damage_bonus
+	player.attack_damage += damage_bonus
 	print("Player health after accepting temp buff: ", player.health)
-	print("Player damage after accepting temp buff: ", player.damage)
+	print("Player attack damage after accepting temp buff: ", player.attack_damage)
 	print("Temporary buff card offer accepted")
 	super._on_accept_pressed()

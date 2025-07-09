@@ -9,7 +9,6 @@ const GRASPING_WRETCH_SCENE: PackedScene = preload("res://src/enemies/grasping_w
 @export var obstacle_count: int = 2
 
 
-
 func _ready():
 	room_type = RoomType.BATTLE
 	super._ready()
@@ -18,8 +17,7 @@ func _ready():
 # Override feature spawning for battle-specific logic
 func _spawn_room_features():
 	print("BattleRoom spawning combat features...")
-	_spawn_enemies()
-	_spawn_obstacles()
+	# _spawn_enemies()
 
 
 func _spawn_enemies():

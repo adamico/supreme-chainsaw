@@ -3,10 +3,11 @@
 [ext_resource type="Script" uid="uid://c2w345s7mrflj" path="res://src/rooms/features/sacrifice_shrine.gd" id="1_mrm48"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mrm48"]
-size = Vector2(64, 32)
+size = Vector2(16, 16)
 
-[node name="SacrificeShrine" type="StaticBody2D" groups=["sacrifice_shrines"]]
-collision_layer = 9
+[node name="SacrificeShrine" type="Area2D" groups=["sacrifice_shrines"]]
+collision_layer = 8
+collision_mask = 0
 script = ExtResource("1_mrm48")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

@@ -5,7 +5,7 @@
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_1wsf3"]
 
 [node name="PermBuffCardOffer" type="Panel"]
-custom_minimum_size = Vector2(180, 210)
+custom_minimum_size = Vector2(150, 150)
 script = ExtResource("1_1wsf3")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]

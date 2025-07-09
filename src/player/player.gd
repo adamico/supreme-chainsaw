@@ -13,7 +13,7 @@ enum PlayerState {
 }
 
 # Player Movement stats
-@export var speed: float = 300.0
+@export var speed: float = 200.0
 @export var acceleration: float = 1500.0
 @export var friction: float = 1000.0
 
@@ -49,6 +49,12 @@ enum PlayerState {
 		attack_rate = max(value, 0.1)  # Ensure attack rate is not too low
 		print("Player attack rate set to: ", attack_rate)
 		EventBus.player_attack_rate_changed.emit(attack_rate)
+
+@export var attack_damage: int = 10:
+	set(value):
+		attack_damage = max(value, 1)  # Ensure attack damage is at least 1
+		print("Player attack damage set to: ", attack_damage)
+		EventBus.player_attack_damage_changed.emit(attack_damage)
 
 var _current_state: PlayerState = PlayerState.IDLE
 var _input_vector: Vector2 = Vector2.ZERO
@@ -176,17 +182,17 @@ func _update_sprite_animation():
 			_play_animation("idle")
 			animation_player.advance(0)  # Ensure the animation is reset to the first frame
 			if velocity.x > 0:
-				sprite_pivot.scale.x = 2
+				sprite_pivot.scale.x = 1
 			elif velocity.x < 0:
-				sprite_pivot.scale.x = -2
+				sprite_pivot.scale.x = -1
 
 		PlayerState.MOVING:
 			animation_player.speed_scale = 2.0
 			_play_animation("walking")
 			if _input_vector.x > 0:
-				sprite_pivot.scale.x = 2
+				sprite_pivot.scale.x = 1
 			elif _input_vector.x < 0:
-				sprite_pivot.scale.x = -2
+				sprite_pivot.scale.x = -1
 
 		PlayerState.INTERACTING:
 			pass
@@ -243,16 +249,17 @@ func _perform_attack():
 func _check_for_interactables() -> void:
 	print("Checking for nearby interactable objects...")
 
-	var interactables = interaction_area.get_overlapping_bodies()
+	var interactables = interaction_area.get_overlapping_areas()
 	if interactables.size() == 0:
 		print("No interactable objects nearby.")
 		return
 	else:
-		for body in interactables:
-			if body.has_method("interact"):
-				body.interact()
+		for area in interactables:
+			print("Found interactable: ", area.name)
+			if area.has_method("interact"):
+				area.interact()
 			else:
-				print("Interactable does not have an interact method: ", body.name)
+				print("Interactable does not have an interact method: ", area.name)
 
 
 # Public method to get current player state (useful for other systems)

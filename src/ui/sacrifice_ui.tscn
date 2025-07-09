@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://dstkdtqcxprob"]
+[gd_scene load_steps=7 format=3 uid="uid://dstkdtqcxprob"]
 
 [ext_resource type="Script" uid="uid://cun5eq1ib4b63" path="res://src/ui/sacrifice_ui.gd" id="1_lcedn"]
 [ext_resource type="PackedScene" uid="uid://rh1e60ij5pb" path="res://src/ui/temp_buff_card_offer.tscn" id="2_38sjs"]
+[ext_resource type="FontFile" uid="uid://cnrwduxy2ffhs" path="res://assets/Kenney Thick.ttf" id="2_a5wpu"]
 [ext_resource type="PackedScene" uid="uid://uhkgpbtqs2x6" path="res://src/ui/new_skill_card_offer.tscn" id="3_1xfb0"]
 [ext_resource type="PackedScene" uid="uid://dev0wtajxeexp" path="res://src/ui/perm_buff_card_offer.tscn" id="4_nadyy"]
 
@@ -38,13 +39,12 @@ theme_override_constants/margin_bottom = 8
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer"]
 layout_mode = 2
-theme_override_constants/separation = 8
 alignment = 1
 
 [node name="TitleLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_fonts/font = ExtResource("2_a5wpu")
 text = "Sacrifice Shrine"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -58,12 +58,11 @@ vertical_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 16
 
 [node name="CardsContainer" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 25
+theme_override_constants/separation = 8
 alignment = 1
 
 [node name="TempBuffCardOffer" parent="Panel/MarginContainer/VBoxContainer/CardsContainer" groups=["cards"] instance=ExtResource("2_38sjs")]

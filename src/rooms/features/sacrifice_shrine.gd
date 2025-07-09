@@ -1,4 +1,4 @@
-class_name SacrificeShrine extends StaticBody2D
+class_name SacrificeShrine extends Area2D
 
 var player: Player
 

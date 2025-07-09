@@ -5,15 +5,15 @@
 [ext_resource type="Script" uid="uid://cjtuj4c1ulopw" path="res://src/components/hit_box_component.gd" id="3_3s768"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3s768"]
-radius = 7.0
-height = 14.0
+radius = 3.0
+height = 6.0
 
 [node name="AxeAttack" type="Node2D"]
+y_sort_enabled = true
 script = ExtResource("1_wl5c8")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 unique_name_in_owner = true
-scale = Vector2(2, 2)
 texture = ExtResource("2_tq13n")
 offset = Vector2(5.5, 2.5)
 region_enabled = true

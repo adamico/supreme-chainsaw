@@ -1,6 +1,6 @@
 # Base Room class for handling room features spawning
 # This class provides the foundation for different room types and their unique features
-class_name Room extends TileMapLayer
+class_name Room extends Node2D
 
 # Room types enum for extensibility
 enum RoomType {
@@ -76,17 +76,6 @@ func _get_random_spawn_point() -> Vector2:
 	return point
 
 
-func _spawn_door(door_position: Vector2, target_room_type: RoomType):
-	var door = _create_door(target_room_type)
-	if door:
-		door.name = "Door to " + RoomType.keys()[target_room_type]
-		door.global_position = door_position
-		add_child(door)
-		spawned_features.append(door)
-
-		print("Spawned door to ", RoomType.keys()[target_room_type], " at ", door_position)
-
-
 # Spawn a specific feature at a given position
 func spawn_feature(feature_type: FeatureType, spawn_position: Vector2) -> Node2D:
 	var feature_node = _create_feature(feature_type)
@@ -132,28 +121,6 @@ func _create_collectible() -> Node2D:
 
 	return collectible
 
-
-func _create_door(target_room_type: RoomType) -> Node2D:
-	var door = Area2D.new()
-	door.name = "Door"
-
-	# Add visual representation
-	var sprite = Sprite2D.new()
-	sprite.texture = _create_colored_texture(Vector2(32, 64), Color.BLUE)
-	door.add_child(sprite)
-
-	# Add collision for interaction
-	var collision = CollisionShape2D.new()
-	var shape = RectangleShape2D.new()
-	shape.size = Vector2(32, 64)
-	collision.shape = shape
-	door.collision_mask = 2
-	door.add_child(collision)
-	door.body_entered.connect(_on_door_entered.bind(target_room_type))
-
-	return door
-
-
 # Create a basic obstacle (can be overridden)
 func _create_obstacle() -> Node2D:
 	var obstacle = StaticBody2D.new()
@@ -168,6 +135,7 @@ func _create_obstacle() -> Node2D:
 	var collision = CollisionShape2D.new()
 	var shape = RectangleShape2D.new()
 	shape.size = Vector2(32, 32)
+	obstacle.collision_layer = 1  # Set collision layer for obstacles
 	collision.shape = shape
 	obstacle.add_child(collision)
 
