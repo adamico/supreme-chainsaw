@@ -1,6 +1,91 @@
-[gd_resource type="Theme" load_steps=2 format=3 uid="uid://02205mhqnts"]
+[gd_resource type="Theme" load_steps=9 format=3 uid="uid://dofdthyhp0brv"]
 
 [ext_resource type="FontFile" uid="uid://ceomrfhis0lwo" path="res://assets/Kenney Pixel.ttf" id="1_ipuwc"]
+[ext_resource type="StyleBox" uid="uid://ypih0na3rad3" path="res://src/resources/new_style_box_flat.tres" id="2_rk1u1"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rk1u1"]
+
+[sub_resource type="FontVariation" id="FontVariation_ipuwc"]
+base_font = ExtResource("1_ipuwc")
+variation_embolden = 1.2
+
+[sub_resource type="FontVariation" id="FontVariation_rk1u1"]
+base_font = ExtResource("1_ipuwc")
+variation_embolden = 1.2
+variation_transform = Transform2D(1, 0.2, 0, 1, 0, 0)
+
+[sub_resource type="FontVariation" id="FontVariation_nws77"]
+base_font = ExtResource("1_ipuwc")
+variation_transform = Transform2D(1, 0.2, 0, 1, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rjjq6"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(1, 1, 1, 0.75)
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lgb67"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
 
 [resource]
-default_font = ExtResource("1_ipuwc")
+Button/colors/font_color = Color(0.992157, 0.941176, 0.835294, 1)
+Button/colors/font_disabled_color = Color(0.992157, 0.941176, 0.835294, 1)
+Label/colors/font_color = Color(0, 0.188235, 0.286275, 1)
+Label/colors/font_outline_color = Color(0, 0, 0, 1)
+Label/colors/font_shadow_color = Color(0, 0, 0, 0)
+Label/constants/line_spacing = 3
+Label/constants/outline_size = 0
+Label/constants/shadow_offset_x = 1
+Label/constants/shadow_offset_y = 1
+Label/constants/shadow_outline_size = 1
+Label/font_sizes/font_size = 16
+Label/fonts/font = ExtResource("1_ipuwc")
+Label/styles/normal = SubResource("StyleBoxEmpty_rk1u1")
+Panel/styles/panel = ExtResource("2_rk1u1")
+RichTextLabel/colors/default_color = Color(0, 0.188235, 0.286275, 1)
+RichTextLabel/colors/font_outline_color = Color(0, 0, 0, 1)
+RichTextLabel/colors/font_selected_color = Color(0, 0, 0, 0)
+RichTextLabel/colors/font_shadow_color = Color(0, 0, 0, 0)
+RichTextLabel/colors/selection_color = Color(0.1, 0.1, 1, 0.8)
+RichTextLabel/colors/table_border = Color(0, 0, 0, 0)
+RichTextLabel/colors/table_even_row_bg = Color(0, 0, 0, 0)
+RichTextLabel/colors/table_odd_row_bg = Color(0, 0, 0, 0)
+RichTextLabel/constants/line_separation = 0
+RichTextLabel/constants/outline_size = 0
+RichTextLabel/constants/shadow_offset_x = 1
+RichTextLabel/constants/shadow_offset_y = 1
+RichTextLabel/constants/shadow_outline_size = 1
+RichTextLabel/constants/table_h_separation = 3
+RichTextLabel/constants/table_v_separation = 3
+RichTextLabel/constants/text_highlight_h_padding = 3
+RichTextLabel/constants/text_highlight_v_padding = 3
+RichTextLabel/font_sizes/bold_font_size = 16
+RichTextLabel/font_sizes/bold_italics_font_size = 16
+RichTextLabel/font_sizes/italics_font_size = 16
+RichTextLabel/font_sizes/mono_font_size = 16
+RichTextLabel/font_sizes/normal_font_size = 16
+RichTextLabel/fonts/bold_font = SubResource("FontVariation_ipuwc")
+RichTextLabel/fonts/bold_italics_font = SubResource("FontVariation_rk1u1")
+RichTextLabel/fonts/italics_font = SubResource("FontVariation_nws77")
+RichTextLabel/fonts/mono_font = ExtResource("1_ipuwc")
+RichTextLabel/fonts/normal_font = ExtResource("1_ipuwc")
+RichTextLabel/styles/focus = SubResource("StyleBoxFlat_rjjq6")
+RichTextLabel/styles/normal = SubResource("StyleBoxEmpty_lgb67")

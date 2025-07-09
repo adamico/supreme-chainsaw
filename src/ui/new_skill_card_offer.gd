@@ -22,9 +22,9 @@ func _process(_delta: float) -> void:
 func _add_card_details() -> void:
 	card_type_label.bbcode_text = "🔮 New Skill"
 	sacrifice_icon.bbcode_text = "🧠"
-	sacrifice_text.bbcode_text = "[color=cyan]" + str(experience_cost) + " XP[/color]"
+	sacrifice_text.bbcode_text = "[color=" + Constants.EXPERIENCE_COLOR + "]-" + str(experience_cost) + " XP[/color]"
 	offer_icon.bbcode_text = "🏃"
-	offer_text.bbcode_text = "[color=gold]" + skill_name + "[/color]"
+	offer_text.bbcode_text = "[color=" + Constants.SKILL_COLOR + "]" + skill_name + "[/color]"
 	new_skill_accept_button.pressed.connect(_on_accept_pressed)
 
 

@@ -24,10 +24,10 @@ func _process(_delta: float) -> void:
 func _add_card_details() -> void:
 	card_type_label.bbcode_text = "🕰️ Temporary Buff"
 	sacrifice_icon.bbcode_text = "💔"
-	sacrifice_text.bbcode_text = "[color=red]-" + str(health_cost) + " HP[/color]"
+	sacrifice_text.bbcode_text = "[color=" + Constants.HEALTH_COLOR + "]-" + str(health_cost) + " HP[/color]"
 	offer_icon.bbcode_text = "⚔️"
-	offer_text.bbcode_text = "[color=green]+" + str(damage_bonus) + " DMG[/color]"
-	duration_text.bbcode_text = "[font_size=12]for " + str(duration) + " battle rooms[/font_size]"
+	offer_text.bbcode_text = "[color=" + Constants.DAMAGE_COLOR + "]+" + str(damage_bonus) + " DMG[/color]"
+	duration_text.bbcode_text = "for " + str(duration) + " battle rooms"
 	temp_buff_accept_button.pressed.connect(_on_accept_pressed)
 
 

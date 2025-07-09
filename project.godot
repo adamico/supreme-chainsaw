@@ -37,7 +37,8 @@ sacrifice_shrines=""
 
 [gui]
 
-theme/custom="uid://02205mhqnts"
+theme/custom="uid://dofdthyhp0brv"
+theme/custom_font="uid://ceomrfhis0lwo"
 
 [input]
 

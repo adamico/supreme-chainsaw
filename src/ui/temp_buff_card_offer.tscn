@@ -25,9 +25,11 @@ layout_mode = 2
 
 [node name="CardTypeLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 text = "🕰️ Temporary Buff"
 fit_content = true
+vertical_alignment = 1
 
 [node name="CardEffectsContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
@@ -52,7 +54,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 bbcode_enabled = true
-text = "[color=red]-20 HP[/color]"
+text = "[color=C1121F]-20 HP[/color]"
 fit_content = true
 vertical_alignment = 1
 
@@ -93,7 +95,7 @@ custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 bbcode_enabled = true
-text = "[font_size=12]for 3 battle rooms[/font_size]"
+text = "for 3 battle rooms"
 fit_content = true
 vertical_alignment = 1
 

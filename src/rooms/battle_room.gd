@@ -17,7 +17,7 @@ func _ready():
 # Override feature spawning for battle-specific logic
 func _spawn_room_features():
 	print("BattleRoom spawning combat features...")
-	# _spawn_enemies()
+	_spawn_enemies()
 
 
 func _spawn_enemies():

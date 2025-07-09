@@ -25,9 +25,11 @@ layout_mode = 2
 
 [node name="CardTypeLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 text = "🔗 Permanent Buff"
 fit_content = true
+vertical_alignment = 1
 
 [node name="CardEffectsContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -51,7 +53,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 bbcode_enabled = true
-text = "[color=lime]1 Memory Shard[/color]"
+text = "[color=9b5de5]1 Memory Shard[/color]"
 fit_content = true
 vertical_alignment = 1
 
@@ -74,7 +76,7 @@ custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 bbcode_enabled = true
-text = "[color=red]+5 MAX HP[/color]"
+text = "[color=C1121F]+5 MAX HP[/color]"
 fit_content = true
 vertical_alignment = 1
 
@@ -93,7 +95,7 @@ custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 bbcode_enabled = true
-text = "[font_size=12]but lose a [color=lime]memory[/color][/font_size]"
+text = "but lose a [color=9b5de5]memory[/color]"
 fit_content = true
 vertical_alignment = 1
 

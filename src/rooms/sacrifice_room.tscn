@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://d3iwnpjnk7a1g" path="res://src/player/player.tscn" id="1_d6cwe"]
 [ext_resource type="Script" uid="uid://f3ldqcmc87ta" path="res://src/rooms/sacrifice_room.gd" id="1_gqpka"]
-[ext_resource type="TileSet" uid="uid://b7fpx8ccuewmk" path="res://src/resources/dungeon_tileset.tres" id="2_fbhk6"]
+[ext_resource type="TileSet" uid="uid://duve2ayaapw3f" path="res://src/resources/dungeon_tileset.tres" id="2_fbhk6"]
 [ext_resource type="PackedScene" uid="uid://n4iwyyrbwmw" path="res://src/rooms/features/sacrifice_shrine.tscn" id="4_tfs27"]
 
 [node name="SacrificeRoom" type="Node2D"]

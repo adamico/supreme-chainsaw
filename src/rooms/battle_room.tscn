@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=4 uid="uid://cxk8y2m4n6qqa"]
 
-[ext_resource type="TileSet" uid="uid://b7fpx8ccuewmk" path="res://src/resources/dungeon_tileset.tres" id="1_6c6w6"]
+[ext_resource type="TileSet" uid="uid://duve2ayaapw3f" path="res://src/resources/dungeon_tileset.tres" id="1_6c6w6"]
 [ext_resource type="PackedScene" uid="uid://d3iwnpjnk7a1g" path="res://src/player/player.tscn" id="1_player"]
 [ext_resource type="Script" uid="uid://nl6s0k2psg3j" path="res://src/rooms/battle_room.gd" id="2_battle_room_script"]
 

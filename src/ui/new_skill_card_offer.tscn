@@ -23,9 +23,11 @@ layout_mode = 2
 
 [node name="CardTypeLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 text = "🔮 New Skill"
 fit_content = true
+vertical_alignment = 1
 
 [node name="CardEffectsContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -49,7 +51,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 bbcode_enabled = true
-text = "[color=cyan]50 XP[/color]"
+text = "[color=669BBC]50 XP[/color]"
 fit_content = true
 vertical_alignment = 1
 

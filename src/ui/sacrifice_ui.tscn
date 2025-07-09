@@ -65,13 +65,13 @@ size_flags_vertical = 3
 theme_override_constants/separation = 8
 alignment = 1
 
-[node name="TempBuffCardOffer" parent="Panel/MarginContainer/VBoxContainer/CardsContainer" groups=["cards"] instance=ExtResource("2_38sjs")]
+[node name="TempBuffCardOffer" parent="Panel/MarginContainer/VBoxContainer/CardsContainer" instance=ExtResource("2_38sjs")]
 layout_mode = 2
 
-[node name="NewSkillCardOffer" parent="Panel/MarginContainer/VBoxContainer/CardsContainer" groups=["cards"] instance=ExtResource("3_1xfb0")]
+[node name="NewSkillCardOffer" parent="Panel/MarginContainer/VBoxContainer/CardsContainer" instance=ExtResource("3_1xfb0")]
 layout_mode = 2
 
-[node name="PermBuffCardOffer" parent="Panel/MarginContainer/VBoxContainer/CardsContainer" groups=["cards"] instance=ExtResource("4_nadyy")]
+[node name="PermBuffCardOffer" parent="Panel/MarginContainer/VBoxContainer/CardsContainer" instance=ExtResource("4_nadyy")]
 layout_mode = 2
 
 [node name="ButtonsContainer" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]

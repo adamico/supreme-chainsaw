@@ -22,10 +22,10 @@ func _process(_delta: float) -> void:
 func _add_card_details() -> void:
 	card_type_label.bbcode_text = "🔗 Permanent Buff"
 	sacrifice_icon.bbcode_text = "🧩"
-	sacrifice_text.bbcode_text = "[color=lime]" + str(memory_shard_cost) + " Memory Shard[/color]"
+	sacrifice_text.bbcode_text = "[color=" + Constants.MEMORY_SHARD_COLOR + "]-" + str(memory_shard_cost) + " Memory Shard[/color]"
 	offer_icon.bbcode_text = "❤️‍🩹"
-	offer_text.bbcode_text = "[color=red]+" + str(max_hp_increase) + " MAX HP[/color]"
-	memory_text.bbcode_text = "[font_size=12]but lose a [color=lime]memory[/color][/font_size]"
+	offer_text.bbcode_text = "[color=" + Constants.HEALTH_COLOR + "]+" + str(max_hp_increase) + " MAX HP[/color]"
+	memory_text.bbcode_text = "but lose a [color=" + Constants.MEMORY_SHARD_COLOR + "]memory[/color]"
 	perm_buff_accept_button.pressed.connect(_on_accept_pressed)
 
 
