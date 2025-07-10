@@ -4,18 +4,10 @@ class_name Player extends CharacterBody2D
 
 const AXE_ATTACK_SCENE = preload("res://src/player/attacks/axe_attack.tscn")
 
-# State enum for state machine
-enum PlayerState {
-	IDLE,
-	MOVING,
-	INTERACTING,
-	ATTACKING
-}
-
 # Player Movement stats
-@export var speed: float = 150.0
-@export var acceleration: float = 1000.0
-@export var friction: float = 800.0
+@export var speed: float = 80.0
+@export var acceleration: float = 500.0
+@export var friction: float = 400.0
 
 # Player stats
 @export var max_health: int:
@@ -56,7 +48,6 @@ enum PlayerState {
 		print("Player attack damage set to: ", attack_damage)
 		EventBus.player_attack_damage_changed.emit(attack_damage)
 
-var _current_state: PlayerState = PlayerState.IDLE
 var _input_vector: Vector2 = Vector2.ZERO
 var _shooting_direction: Vector2 = Vector2.RIGHT
 
@@ -65,16 +56,17 @@ var _shooting_direction: Vector2 = Vector2.RIGHT
 @onready var interaction_area: Area2D = %InteractionArea
 @onready var sprite_pivot: Marker2D = %SpritePivot
 @onready var attack_origin: Marker2D = %AttackOrigin
+@onready var state_chart: StateChart = %StateChart
+@onready var idling_state: AtomicState = %Idling
+@onready var moving_state: AtomicState = %Moving
+@onready var interacting_state: AtomicState = %Interacting
+@onready var attacking_state: AtomicState = %Attacking
+@onready var recharging_state: AtomicState = %Recharging
 
 
 func _ready() -> void:
-	# Initialize player stats
-	health = 100
-	experience = 50
-	memory_shards = 1
-	attack_rate = 0.5
-	_change_state(PlayerState.IDLE)
-	print("Player initialized")
+	_initialize_stats()
+	_connect_state_chart_events()
 
 
 func _physics_process(delta) -> void:
@@ -85,16 +77,33 @@ func _physics_process(delta) -> void:
 
 	_handle_movement(delta)
 	_handle_input()
-	_update_state_machine(delta)
-	_update_sprite_animation()
 	move_and_slide()
+
+
+func _initialize_stats() -> void:
+	# Initialize player stats
+	health = 100
+	experience = 50
+	memory_shards = 1
+	attack_rate = 0.5
+	print("Player initialized")
+
+
+func _connect_state_chart_events() -> void:
+	# Connect state chart events to handle state transitions
+	idling_state.state_entered.connect(_on_idling_state_entered)
+	idling_state.state_physics_processing.connect(_on_idling_state_physics_processing)
+	moving_state.state_entered.connect(_on_moving_state_entered)
+	moving_state.state_physics_processing.connect(_on_moving_state_physics_processing)
+	interacting_state.state_entered.connect(_on_interacting_state_entered)
+	attacking_state.state_entered.connect(_on_attacking_state_entered)
 
 
 func _handle_input() -> void:
 	if Input.is_action_just_pressed("interact"):
-		_perform_interact()
+		state_chart.send_event("interact")
 	if Input.is_action_pressed("attack"):
-		_perform_attack()
+		state_chart.send_event("attack")
 
 
 func _handle_movement(delta) -> void:
@@ -108,97 +117,6 @@ func _handle_movement(delta) -> void:
 		target_velocity = Vector2.ZERO
 
 	velocity = velocity.move_toward(target_velocity, velocity_rate * delta)
-
-
-func _update_state_machine(_delta):
-	match _current_state:
-		PlayerState.IDLE:
-			if _input_vector != Vector2.ZERO:
-				_change_state(PlayerState.MOVING)
-
-		PlayerState.MOVING:
-			if _input_vector == Vector2.ZERO:
-				_change_state(PlayerState.IDLE)
-
-		PlayerState.INTERACTING:
-			await get_tree().create_timer(0.5).timeout
-			if _input_vector != Vector2.ZERO:
-				_change_state(PlayerState.MOVING)
-			else:
-				_change_state(PlayerState.IDLE)
-
-		PlayerState.ATTACKING:
-			if attack_cooldown.is_stopped():
-				_change_state(PlayerState.IDLE)
-
-
-func _change_state(new_state: PlayerState):
-	if _current_state == new_state:
-		return
-
-	_exit_state(_current_state)
-	_current_state = new_state
-	_enter_state(new_state)
-
-
-func _enter_state(state: PlayerState):
-	match state:
-		PlayerState.IDLE:
-			pass
-		PlayerState.MOVING:
-			pass
-		PlayerState.INTERACTING:
-			_play_animation("interact")
-		PlayerState.ATTACKING:
-			if _shooting_direction.x > 0:
-				_play_animation("attacking_right")
-			elif _shooting_direction.x < 0:
-				_play_animation("attacking_left")
-			else:
-				_play_animation("attacking_vertical")
-			_spawn_attack(_shooting_direction)
-			attack_cooldown.start(attack_rate)  # Start cooldown after attack
-
-
-func _exit_state(state: PlayerState):
-	match state:
-		PlayerState.IDLE:
-			pass
-		PlayerState.MOVING:
-			pass
-		PlayerState.INTERACTING:
-			pass
-		PlayerState.ATTACKING:
-			pass
-
-
-func _update_sprite_animation():
-	if not sprite_pivot:
-		return
-
-	match _current_state:
-		PlayerState.IDLE:
-			animation_player.speed_scale = 1.0
-			_play_animation("idle")
-			animation_player.advance(0)  # Ensure the animation is reset to the first frame
-			if velocity.x > 0:
-				sprite_pivot.scale.x = 1
-			elif velocity.x < 0:
-				sprite_pivot.scale.x = -1
-
-		PlayerState.MOVING:
-			animation_player.speed_scale = 2.0
-			_play_animation("walking")
-			if _input_vector.x > 0:
-				sprite_pivot.scale.x = 1
-			elif _input_vector.x < 0:
-				sprite_pivot.scale.x = -1
-
-		PlayerState.INTERACTING:
-			pass
-
-		PlayerState.ATTACKING:
-			pass
 
 
 func _spawn_attack(shooting_direction: Vector2):
@@ -219,33 +137,6 @@ func _play_animation(animation_name: String):
 			animation_player.play(animation_name)
 
 
-func _perform_interact():
-	print("Interact action triggered!")
-
-	if _current_state != PlayerState.INTERACTING:
-		_change_state(PlayerState.INTERACTING)
-
-	# Here you can add specific interaction logic:
-	# - Check for nearby objects to interact with
-	# - Trigger dialogue systems
-	# - Open inventory
-	# - Use items
-	# - etc.
-
-	# Example: Look for interactable objects in range
-	_check_for_interactables()
-
-
-func _perform_attack():
-	if not attack_cooldown.is_stopped():
-		print("Attack is on cooldown. Please wait.")
-		return
-
-	if _current_state != PlayerState.ATTACKING:
-		print("Performing attack action!")
-		_change_state(PlayerState.ATTACKING)
-
-
 func _check_for_interactables() -> void:
 	print("Checking for nearby interactable objects...")
 
@@ -262,21 +153,46 @@ func _check_for_interactables() -> void:
 				print("Interactable does not have an interact method: ", area.name)
 
 
-# Public method to get current player state (useful for other systems)
-func get_current_state() -> PlayerState:
-	return _current_state
+func _on_idling_state_entered() -> void:
+	animation_player.speed_scale = 1.0
+	_play_animation("idle")
+	if velocity.x > 0:
+		sprite_pivot.scale.x = 1
+	elif velocity.x < 0:
+		sprite_pivot.scale.x = -1
 
 
-# Public method to check if player is moving
-func is_moving() -> bool:
-	return _current_state == PlayerState.MOVING
+func _on_idling_state_physics_processing(_delta: float) -> void:
+	if _input_vector != Vector2.ZERO:
+		state_chart.send_event("move")
 
 
-# Public method to check if player can interact
-func can_interact() -> bool:
-	return _current_state != PlayerState.INTERACTING
+func _on_moving_state_entered() -> void:
+	animation_player.speed_scale = 2.0
+	_play_animation("walking")
+	if _input_vector.x > 0:
+		sprite_pivot.scale.x = 1
+	elif _input_vector.x < 0:
+		sprite_pivot.scale.x = -1
 
 
-# Public method to force state change (useful for cutscenes, etc.)
-func force_state_change(new_state: PlayerState):
-	_change_state(new_state)
+func _on_moving_state_physics_processing(_delta: float) -> void:
+	if _input_vector == Vector2.ZERO:
+		state_chart.send_event("stop_moving")
+
+
+func _on_attacking_state_entered() -> void:
+	if _shooting_direction.x > 0:
+		_play_animation("attacking_right")
+	elif _shooting_direction.x < 0:
+		_play_animation("attacking_left")
+	else:
+		_play_animation("attacking_vertical")
+
+	_spawn_attack(_shooting_direction)
+
+
+func _on_interacting_state_entered() -> void:
+	animation_player.speed_scale = 1.0
+	_play_animation("interact")
+	_check_for_interactables()

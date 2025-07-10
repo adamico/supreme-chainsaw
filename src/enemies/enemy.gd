@@ -6,7 +6,7 @@ signal died
 
 @export var damage:= 10.0
 @export var chasing_detection_range:= 200.0
-@export var chasing_speed:= 50.0
+@export var chasing_speed:= 30.0
 @export var experience_reward:= 10.0
 @export var health:= 30.0:
 	set(value):
