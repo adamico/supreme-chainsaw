@@ -49,7 +49,7 @@ const AXE_ATTACK_SCENE = preload("res://src/player/attacks/axe_attack.tscn")
 		EventBus.player_attack_damage_changed.emit(attack_damage)
 
 var _input_vector: Vector2 = Vector2.ZERO
-var _shooting_direction: Vector2 = Vector2.RIGHT
+var _attacking_vector: Vector2 = Vector2.RIGHT
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var attack_cooldown: Timer = %AttackCooldown
@@ -71,12 +71,10 @@ func _ready() -> void:
 
 func _physics_process(delta) -> void:
 	_input_vector = Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	# use the last non zero input vector for the shooting direction when not moving
-	if _input_vector != Vector2.ZERO:
-		_shooting_direction = _input_vector
+	_attacking_vector = Input.get_vector("attack_left", "attack_right", "attack_up", "attack_down")
 
 	_handle_movement(delta)
-	_handle_input()
+	_handle_actions()
 	move_and_slide()
 
 
@@ -99,10 +97,10 @@ func _connect_state_chart_events() -> void:
 	attacking_state.state_entered.connect(_on_attacking_state_entered)
 
 
-func _handle_input() -> void:
+func _handle_actions() -> void:
 	if Input.is_action_just_pressed("interact"):
 		state_chart.send_event("interact")
-	if Input.is_action_pressed("attack"):
+	if _attacking_vector != Vector2.ZERO:
 		state_chart.send_event("attack")
 
 
@@ -182,14 +180,14 @@ func _on_moving_state_physics_processing(_delta: float) -> void:
 
 
 func _on_attacking_state_entered() -> void:
-	if _shooting_direction.x > 0:
+	if _attacking_vector.x > 0:
 		_play_animation("attacking_right")
-	elif _shooting_direction.x < 0:
+	elif _attacking_vector.x < 0:
 		_play_animation("attacking_left")
 	else:
 		_play_animation("attacking_vertical")
 
-	_spawn_attack(_shooting_direction)
+	_spawn_attack(_attacking_vector)
 
 
 func _on_interacting_state_entered() -> void:

@@ -8,7 +8,7 @@ var parent_node: Node2D
 func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 	body_entered.connect(func(_body): parent_node.queue_free())
-	_calculate_damage()
+	_calculate_damage.call_deferred()
 
 
 func _calculate_damage() -> void:
