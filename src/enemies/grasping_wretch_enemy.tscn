@@ -1,7 +1,11 @@
-[gd_scene load_steps=4 format=3 uid="uid://bf1wa731iextr"]
+[gd_scene load_steps=8 format=3 uid="uid://bf1wa731iextr"]
 
 [ext_resource type="Script" uid="uid://bw3wi7qs0rpyl" path="res://src/enemies/enemy.gd" id="1_6t1wc"]
+[ext_resource type="Script" uid="uid://couw105c3bde4" path="res://addons/godot_state_charts/state_chart.gd" id="2_4gwxj"]
 [ext_resource type="Script" uid="uid://bihkcn5ihs8cn" path="res://src/components/hurt_box_component.gd" id="2_pi86q"]
+[ext_resource type="Script" uid="uid://jk2jm1g6q853" path="res://addons/godot_state_charts/compound_state.gd" id="3_72whu"]
+[ext_resource type="Script" uid="uid://cytafq8i1y8qm" path="res://addons/godot_state_charts/atomic_state.gd" id="4_bknyb"]
+[ext_resource type="Script" uid="uid://cf1nsco3w0mf6" path="res://addons/godot_state_charts/transition.gd" id="5_72whu"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6t1wc"]
 size = Vector2(24, 24)
@@ -10,6 +14,38 @@ size = Vector2(24, 24)
 collision_layer = 4
 collision_mask = 5
 script = ExtResource("1_6t1wc")
+
+[node name="StateChart" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("2_4gwxj")
+metadata/_custom_type_script = "uid://couw105c3bde4"
+
+[node name="Root" type="Node" parent="StateChart"]
+script = ExtResource("3_72whu")
+initial_state = NodePath("Sleeping")
+metadata/_custom_type_script = "uid://jk2jm1g6q853"
+
+[node name="Sleeping" type="Node" parent="StateChart/Root"]
+unique_name_in_owner = true
+script = ExtResource("4_bknyb")
+metadata/_custom_type_script = "uid://cytafq8i1y8qm"
+
+[node name="SleepingToChasing" type="Node" parent="StateChart/Root/Sleeping"]
+script = ExtResource("5_72whu")
+to = NodePath("../../Chasing")
+event = &"chase"
+delay_in_seconds = "0.5"
+
+[node name="Chasing" type="Node" parent="StateChart/Root"]
+unique_name_in_owner = true
+script = ExtResource("4_bknyb")
+metadata/_custom_type_script = "uid://cytafq8i1y8qm"
+
+[node name="ChasingToSleeping" type="Node" parent="StateChart/Root/Chasing"]
+script = ExtResource("5_72whu")
+to = NodePath("../../Sleeping")
+event = &"sleep"
+delay_in_seconds = "0.5"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_6t1wc")

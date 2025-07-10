@@ -4,19 +4,9 @@ class_name Enemy extends CharacterBody2D
 
 signal died
 
-# State enum for state machine
-enum EnemyState {
-	IDLE,
-	MOVING,
-	DASHING,
-	SLEEPING,
-	WINDING,
-}
-
 @export var damage:= 10.0
-@export var detection_range:= 200.0
-@export var walk_speed:= 50.0
-@export var dash_speed:= 100.0
+@export var chasing_detection_range:= 200.0
+@export var chasing_speed:= 50.0
 @export var experience_reward:= 10.0
 @export var health:= 30.0:
 	set(value):
@@ -25,15 +15,16 @@ enum EnemyState {
 			died.emit()
 
 var current_speed:= 0.0
-var current_state: EnemyState = EnemyState.IDLE
-var dashing_distance: float = 150.0
-var dashing_destination: Vector2
+var minimum_chasing_distance:= 30.0
 var direction: Vector2
 var distance_to_player: float
 var player_ref: CharacterBody2D = null
 var room: Room = null
 
 @onready var hurt_box: HurtBoxComponent = %HurtBoxComponent
+@onready var state_chart: StateChart = %StateChart
+@onready var sleeping_state: AtomicState = %Sleeping
+@onready var chasing_state: AtomicState = %Chasing
 
 
 func _ready() -> void:
@@ -42,88 +33,50 @@ func _ready() -> void:
 		player_ref = room.player
 		print("Enemy initialized - Player reference:", player_ref)
 
-	_change_state(EnemyState.IDLE)
+	sleeping_state.state_entered.connect(_on_sleeping_state_entered)
+	sleeping_state.physics_state_processing.connect(_on_sleeping_physics_state_processing)
+	chasing_state.state_entered.connect(_on_chasing_state_entered)
+	chasing_state.physics_state_processing.connect(_on_chasing_physics_state_processing)
+
 	died.connect(_on_died)
 	hurt_box.hit_received.connect(_on_hurt_box_hit_received)
 
 
-func _physics_process(delta) -> void:
-	if not player_ref:
-		print("No player reference found, cannot follow")
-		return
+func _physics_process(_delta) -> void:
 	velocity = direction * current_speed
-	_update_state_machine(delta)
 	move_and_slide()
 
 
-func _update_state_machine(_delta):
-	match current_state:
-		EnemyState.IDLE:
-			# Check if player is within detection range
-			distance_to_player = global_position.distance_to(player_ref.global_position)
-			if distance_to_player < detection_range and distance_to_player > 30:
-				_change_state(EnemyState.MOVING)
+func _on_sleeping_state_entered() -> void:
+	print("Entering sleeping state")
+	print("Distance to player= ", distance_to_player)
+	current_speed = 0.0
+	
 
-		EnemyState.MOVING:
-			distance_to_player = global_position.distance_to(player_ref.global_position)
-			direction = (player_ref.global_position - global_position).normalized()
-			if distance_to_player < dashing_distance:
-				_change_state(EnemyState.WINDING)
-			if distance_to_player > detection_range:
-				_change_state(EnemyState.IDLE)
-
-		EnemyState.WINDING:
-			# add animation
-			await get_tree().create_timer(0.5).timeout
-			_change_state(EnemyState.DASHING)
-
-		EnemyState.DASHING:
-			if global_position.distance_to(dashing_destination) <= 30.0:
-				_change_state(EnemyState.SLEEPING)
-
-		EnemyState.SLEEPING:
-			# add animation
-			await get_tree().create_timer(0.5).timeout
-			_change_state(EnemyState.IDLE)
-
-
-func _change_state(new_state: EnemyState):
-	if current_state == new_state:
+func _on_sleeping_physics_state_processing(_delta: float) -> void:
+	# Check if player is within detection range
+	distance_to_player = global_position.distance_to(player_ref.global_position)
+	
+	# Transition to chasing state if player is detected
+	# Ensure the player is within detection range
+	# and not too close (to avoid immediate chasing)
+	if distance_to_player <= chasing_detection_range and distance_to_player > minimum_chasing_distance:
+		state_chart.send_event("chase")
 		return
 
-	_exit_state(current_state)
-	print("changing enemy state from ", EnemyState.keys()[current_state], " to ", EnemyState.keys()[new_state])
-	current_state = new_state
-	_enter_state(new_state)
+
+func _on_chasing_state_entered() -> void:
+	print("Entering chasing state")
+	print("Distance to player= ", distance_to_player)
+	current_speed = chasing_speed
 
 
-func _enter_state(state: EnemyState):
-	match state:
-		EnemyState.IDLE:
-			current_speed = 0.0
-		EnemyState.MOVING:
-			current_speed = walk_speed
-		EnemyState.WINDING, EnemyState.SLEEPING:
-			current_speed = 0.0
-		EnemyState.DASHING:
-			current_speed = dash_speed
-			var player_position = player_ref.global_position
-			dashing_destination = player_position
-			direction = global_position.direction_to(player_position)
-
-
-func _exit_state(state: EnemyState):
-	match state:
-		EnemyState.IDLE:
-			pass
-		EnemyState.MOVING:
-			pass
-		EnemyState.WINDING:
-			pass
-		EnemyState.DASHING:
-			pass
-		EnemyState.SLEEPING:
-			pass
+func _on_chasing_physics_state_processing(_delta: float) -> void:
+	distance_to_player = global_position.distance_to(player_ref.global_position)
+	direction = (player_ref.global_position - global_position).normalized()
+	if distance_to_player > chasing_detection_range:
+		state_chart.send_event("sleep")
+		return
 
 
 func _drop_loot() -> void:
