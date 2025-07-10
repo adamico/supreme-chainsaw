@@ -4,6 +4,8 @@ class_name Enemy extends CharacterBody2D
 
 signal died
 
+const RED_SPRITE_MATERIAL:= preload("res://src/resources/red_sprite_material.tres")
+
 @export var damage:= 10.0
 @export var chasing_detection_range:= 200.0
 @export var chasing_speed:= 30.0
@@ -21,6 +23,8 @@ var distance_to_player: float
 var player_ref: CharacterBody2D = null
 var room: Room = null
 
+@onready var animation_player: AnimationPlayer = %AnimationPlayer
+@onready var body_sprite: Sprite2D = %Body
 @onready var hurt_box: HurtBoxComponent = %HurtBoxComponent
 @onready var state_chart: StateChart = %StateChart
 @onready var sleeping_state: AtomicState = %Sleeping
@@ -50,13 +54,14 @@ func _physics_process(_delta) -> void:
 func _on_sleeping_state_entered() -> void:
 	print("Entering sleeping state")
 	print("Distance to player= ", distance_to_player)
+	animation_player.play("sleeping")
 	current_speed = 0.0
-	
+
 
 func _on_sleeping_physics_state_processing(_delta: float) -> void:
 	# Check if player is within detection range
 	distance_to_player = global_position.distance_to(player_ref.global_position)
-	
+
 	# Transition to chasing state if player is detected
 	# Ensure the player is within detection range
 	# and not too close (to avoid immediate chasing)
@@ -68,6 +73,7 @@ func _on_sleeping_physics_state_processing(_delta: float) -> void:
 func _on_chasing_state_entered() -> void:
 	print("Entering chasing state")
 	print("Distance to player= ", distance_to_player)
+	animation_player.play("chasing")
 	current_speed = chasing_speed
 
 
@@ -97,9 +103,21 @@ func _on_died() -> void:
 	queue_free()  # Remove enemy from the scene
 
 
-func _on_hurt_box_hit_received(hit_damage: int) -> void:
+func _on_hurt_box_hit_received(hitbox: HitBoxComponent) -> void:
 	if health <= 0:
 		return  # Prevent further processing if already dead
 
-	health -= hit_damage
+	body_sprite.material = RED_SPRITE_MATERIAL
+
+	var knockback_direction = hitbox.global_position.direction_to(global_position)
+
+	var tween = create_tween()
+	tween.tween_callback(Shaker.shake.bind(self, 8, 0.15))
+	var knockback_position = knockback_direction * 8
+	tween.tween_property(self, "global_position", global_position - knockback_position, 0.15)
+	tween.tween_interval(0.15)
+
+	tween.finished.connect(func(): body_sprite.material = null)
+
+	health -= hitbox.damage
 	print("HurtBoxComponent: Hit received, new health:", health)

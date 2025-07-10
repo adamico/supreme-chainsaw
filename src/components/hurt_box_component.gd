@@ -1,6 +1,6 @@
 class_name HurtBoxComponent extends Area2D
 
-signal hit_received(damage: int)
+signal hit_received(hitbox: HitBoxComponent)
 
 var _is_invulnerable:= false:
 	set(value):
@@ -13,6 +13,5 @@ func take_hit_from(hitbox: HitBoxComponent) -> void:
 		print("HurtBoxComponent is invulnerable, ignoring hit from", hitbox.name)
 		return
 
-
+	hit_received.emit(hitbox)
 	print("HurtBoxComponent: Hit received from", hitbox.name, "with damage:", hitbox.damage)
-	hit_received.emit(hitbox.damage)

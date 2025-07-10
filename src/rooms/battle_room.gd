@@ -57,11 +57,6 @@ func _create_enemy(enemy_name: String = "Enemy") -> Node2D:
 	var enemy = GRASPING_WRETCH_SCENE.instantiate()
 	enemy.name = enemy_name
 
-	# Add visual representation - red square for enemy
-	var sprite = Sprite2D.new()
-	sprite.texture = _create_colored_texture(Vector2(16, 16), Color.RED)
-	enemy.add_child(sprite)
-
 	return enemy
 
 

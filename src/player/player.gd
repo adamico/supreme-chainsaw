@@ -50,6 +50,7 @@ const AXE_ATTACK_SCENE = preload("res://src/player/attacks/axe_attack.tscn")
 
 var _input_vector: Vector2 = Vector2.ZERO
 var _attacking_vector: Vector2 = Vector2.RIGHT
+var _attack: Node2D
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var attack_cooldown: Timer = %AttackCooldown
@@ -94,6 +95,7 @@ func _connect_state_chart_events() -> void:
 	moving_state.state_entered.connect(_on_moving_state_entered)
 	moving_state.state_physics_processing.connect(_on_moving_state_physics_processing)
 	interacting_state.state_entered.connect(_on_interacting_state_entered)
+	recharging_state.state_entered.connect(_on_recharging_state_entered)
 	attacking_state.state_entered.connect(_on_attacking_state_entered)
 
 
@@ -117,16 +119,13 @@ func _handle_movement(delta) -> void:
 	velocity = velocity.move_toward(target_velocity, velocity_rate * delta)
 
 
-func _spawn_attack(shooting_direction: Vector2):
+func _spawn_attack():
 	if not attack_origin:
 		print("Attack origin marker not found!")
 		return
 
-	var attack_instance = AXE_ATTACK_SCENE.instantiate()
-	attack_instance.global_position = attack_origin.global_position
-	attack_instance.direction = shooting_direction.normalized()
-	get_tree().current_scene.add_child(attack_instance)
-	reset_physics_interpolation()
+	_attack = AXE_ATTACK_SCENE.instantiate()
+	attack_origin.add_child(_attack)
 
 
 func _play_animation(animation_name: String):
@@ -152,6 +151,7 @@ func _check_for_interactables() -> void:
 
 
 func _on_idling_state_entered() -> void:
+	print("Entering idling state")
 	animation_player.speed_scale = 1.0
 	_play_animation("idle")
 	if velocity.x > 0:
@@ -166,6 +166,7 @@ func _on_idling_state_physics_processing(_delta: float) -> void:
 
 
 func _on_moving_state_entered() -> void:
+	print("Entering moving state")
 	animation_player.speed_scale = 2.0
 	_play_animation("walking")
 	if _input_vector.x > 0:
@@ -179,15 +180,19 @@ func _on_moving_state_physics_processing(_delta: float) -> void:
 		state_chart.send_event("stop_moving")
 
 
-func _on_attacking_state_entered() -> void:
-	if _attacking_vector.x > 0:
-		_play_animation("attacking_right")
-	elif _attacking_vector.x < 0:
-		_play_animation("attacking_left")
-	else:
-		_play_animation("attacking_vertical")
+func _on_recharging_state_entered() -> void:
+	print("Entering recharging state")
+	_spawn_attack()
 
-	_spawn_attack(_attacking_vector)
+
+func _on_attacking_state_entered() -> void:
+	print("Entering attacking state")
+	if not is_instance_valid(_attack):
+		return
+
+	_attack.direction = _attacking_vector
+	_attack.reparent(get_tree().current_scene)
+	_attack.fire()
 
 
 func _on_interacting_state_entered() -> void:
