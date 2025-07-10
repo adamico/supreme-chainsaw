@@ -26,7 +26,7 @@ func _add_card_details() -> void:
 	sacrifice_icon.bbcode_text = "💔"
 	sacrifice_text.bbcode_text = "[color=" + Constants.HEALTH_COLOR + "]-" + str(health_cost) + " HP[/color]"
 	offer_icon.bbcode_text = "⚔️"
-	offer_text.bbcode_text = "[color=" + Constants.DAMAGE_COLOR + "]+" + str(damage_bonus) + " DMG[/color]"
+	offer_text.bbcode_text = "+" + str(damage_bonus) + " DMG"
 	duration_text.bbcode_text = "for " + str(duration) + " battle rooms"
 	temp_buff_accept_button.pressed.connect(_on_accept_pressed)
 

@@ -5,12 +5,17 @@ class_name BattleRoom extends Room
 const GRASPING_WRETCH_SCENE: PackedScene = preload("res://src/enemies/grasping_wretch_enemy.tscn")
 
 # Battle room specific configuration
-@export var enemy_count: int = 1
-@export var obstacle_count: int = 2
+@export var enemy_count: int
+@export var max_enemy_count: int = 3  # Maximum number of enemies to spawn
+@export var obstacle_count: int
+@export var max_obstacle_count: int = 5  # Maximum number of obstacles to spawn
 
 
 func _ready():
 	room_type = RoomType.BATTLE
+
+	enemy_count = randi() % max_enemy_count + 1  # Randomly spawn between 1 and max_enemy_count enemies
+	obstacle_count = randi() % max_obstacle_count + 1  # Randomly spawn between 1 and max_obstacle_count obstacles
 	super._ready()
 
 
@@ -54,7 +59,7 @@ func _create_enemy(enemy_name: String = "Enemy") -> Node2D:
 
 	# Add visual representation - red square for enemy
 	var sprite = Sprite2D.new()
-	sprite.texture = _create_colored_texture(Vector2(24, 24), Color.RED)
+	sprite.texture = _create_colored_texture(Vector2(16, 16), Color.RED)
 	enemy.add_child(sprite)
 
 	return enemy

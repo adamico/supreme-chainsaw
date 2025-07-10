@@ -14,9 +14,9 @@ enum EnemyState {
 }
 
 @export var damage:= 10.0
-@export var detection_range:= 300.0
+@export var detection_range:= 200.0
 @export var walk_speed:= 50.0
-@export var dash_speed:= 300.0
+@export var dash_speed:= 100.0
 @export var experience_reward:= 10.0
 @export var health:= 30.0:
 	set(value):
@@ -59,8 +59,8 @@ func _physics_process(delta) -> void:
 func _update_state_machine(_delta):
 	match current_state:
 		EnemyState.IDLE:
+			# Check if player is within detection range
 			distance_to_player = global_position.distance_to(player_ref.global_position)
-			direction = (player_ref.global_position - global_position).normalized()
 			if distance_to_player < detection_range and distance_to_player > 30:
 				_change_state(EnemyState.MOVING)
 

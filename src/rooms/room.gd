@@ -20,11 +20,12 @@ enum FeatureType {
 }
 
 @export var room_type: RoomType = RoomType.BATTLE
-@export var room_size: Vector2 = Vector2(640, 360)
+@export var room_size: Vector2 = Vector2(320, 180)
 @export var max_features: int = 5
 
 var spawned_features: Array[Node2D] = []
 var feature_spawn_points: Array[Vector2] = []
+var room_margin = 70
 
 @onready var player: CharacterBody2D = $Player
 
@@ -49,10 +50,12 @@ func _generate_spawn_points():
 	# Generate a grid of potential spawn points, avoiding the player start position
 	var player_pos = player.global_position if player else Vector2(320, 180)
 	var spacing = 80
-	var margin = 60
 
-	for x in range(margin, int(room_size.x) - margin, spacing):
-		for y in range(margin, int(room_size.y) - margin, spacing):
+	# Ensure spawn points are within room bounds and not too close to the player
+	# Use a grid pattern to evenly distribute spawn points
+	# This can be adjusted based on room size and feature density
+	for x in range(room_margin, int(room_size.x) - room_margin, spacing):
+		for y in range(room_margin, int(room_size.y) - room_margin, spacing):
 			var spawn_point = Vector2(x, y)
 			# Avoid spawning too close to player
 			if spawn_point.distance_to(player_pos) > 100:
@@ -66,8 +69,8 @@ func _get_random_spawn_point() -> Vector2:
 	if feature_spawn_points.is_empty():
 		# Fallback to random position if no predefined points
 		return Vector2(
-			randf_range(60, room_size.x - 60),
-			randf_range(60, room_size.y - 60)
+			randf_range(room_margin, room_size.x - room_margin),
+			randf_range(room_margin, room_size.y - room_margin)
 		)
 
 	var index = randi() % feature_spawn_points.size()

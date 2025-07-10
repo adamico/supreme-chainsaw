@@ -13,9 +13,9 @@ enum PlayerState {
 }
 
 # Player Movement stats
-@export var speed: float = 200.0
-@export var acceleration: float = 1500.0
-@export var friction: float = 1000.0
+@export var speed: float = 150.0
+@export var acceleration: float = 1000.0
+@export var friction: float = 800.0
 
 # Player stats
 @export var max_health: int:
@@ -72,7 +72,7 @@ func _ready() -> void:
 	health = 100
 	experience = 50
 	memory_shards = 1
-	attack_rate = 0.8
+	attack_rate = 0.5
 	_change_state(PlayerState.IDLE)
 	print("Player initialized")
 
@@ -93,7 +93,7 @@ func _physics_process(delta) -> void:
 func _handle_input() -> void:
 	if Input.is_action_just_pressed("interact"):
 		_perform_interact()
-	if Input.is_action_just_pressed("attack"):
+	if Input.is_action_pressed("attack"):
 		_perform_attack()
 
 

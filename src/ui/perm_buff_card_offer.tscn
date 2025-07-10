@@ -27,6 +27,9 @@ layout_mode = 2
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 4
+bbcode_enabled = true
 text = "🔗 Permanent Buff"
 fit_content = true
 vertical_alignment = 1
@@ -50,8 +53,10 @@ vertical_alignment = 1
 
 [node name="SacrificeText" type="RichTextLabel" parent="MarginContainer/VBoxContainer/CardEffectsContainer/SacrificeContainer"]
 unique_name_in_owner = true
+clip_contents = false
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/outline_size = 4
 bbcode_enabled = true
 text = "[color=9b5de5]1 Memory Shard[/color]"
 fit_content = true
@@ -75,6 +80,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/outline_size = 4
 bbcode_enabled = true
 text = "[color=C1121F]+5 MAX HP[/color]"
 fit_content = true
@@ -91,9 +97,11 @@ theme_override_styles/separator = SubResource("StyleBoxEmpty_1wsf3")
 
 [node name="MemoryText" type="RichTextLabel" parent="MarginContainer/VBoxContainer/CardEffectsContainer/MemoryContainer"]
 unique_name_in_owner = true
+clip_contents = false
 custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/outline_size = 4
 bbcode_enabled = true
 text = "but lose a [color=9b5de5]memory[/color]"
 fit_content = true
