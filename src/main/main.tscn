@@ -9,7 +9,7 @@
 [node name="GameManager" type="Node2D" parent="."]
 script = ExtResource("1_ab7mr")
 
-[node name="RoomManager" type="Node2D" parent="."]
+[node name="RoomManager" type="Node2D" parent="." groups=["room_manager"]]
 y_sort_enabled = true
 script = ExtResource("2_djufw")
 

@@ -57,6 +57,7 @@ func load_room_by_type(room_type: Room.RoomType):
 func switch_to_battle_room():
 	load_room_by_type(Room.RoomType.BATTLE)
 
+
 func switch_to_sacrifice_room():
 	load_room_by_type(Room.RoomType.SACRIFICE)
 

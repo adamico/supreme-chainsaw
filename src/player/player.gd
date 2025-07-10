@@ -51,6 +51,7 @@ const AXE_ATTACK_SCENE = preload("res://src/player/attacks/axe_attack.tscn")
 var _input_vector: Vector2 = Vector2.ZERO
 var _attacking_vector: Vector2 = Vector2.RIGHT
 var _attack: Node2D
+var _room_manager: Node2D
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var attack_cooldown: Timer = %AttackCooldown
@@ -68,6 +69,7 @@ var _attack: Node2D
 func _ready() -> void:
 	_initialize_stats()
 	_connect_state_chart_events()
+	_room_manager = get_tree().get_first_node_in_group("room_manager")
 
 
 func _physics_process(delta) -> void:
@@ -191,7 +193,7 @@ func _on_attacking_state_entered() -> void:
 		return
 
 	_attack.direction = _attacking_vector
-	_attack.reparent(get_tree().current_scene)
+	_attack.reparent(_room_manager.current_room)
 	_attack.fire()
 
 

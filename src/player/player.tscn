@@ -95,7 +95,7 @@ _data = {
 radius = 15.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rxibo"]
-size = Vector2(16, 17)
+size = Vector2(16, 8)
 
 [node name="Player" type="CharacterBody2D" groups=["players"]]
 collision_layer = 2
@@ -232,7 +232,7 @@ unique_name_in_owner = true
 position = Vector2(-6, -2.5)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -7.5)
+position = Vector2(0, -3)
 shape = SubResource("RectangleShape2D_rxibo")
 
 [node name="AttackCooldown" type="Timer" parent="."]

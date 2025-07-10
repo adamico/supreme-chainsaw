@@ -7,7 +7,7 @@ var parent_node: Node2D
 
 func _ready() -> void:
 	area_entered.connect(_on_area_entered)
-	body_entered.connect(func(_body): parent_node.queue_free())
+	body_entered.connect(_on_body_entered)
 	_calculate_damage.call_deferred()
 
 
@@ -27,3 +27,10 @@ func _on_area_entered(area: Area2D) -> void:
 	var hurtbox = area as HurtBoxComponent
 	hurtbox.take_hit_from(self)
 	hit.emit(hurtbox)
+
+
+func _on_body_entered(body: Node2D) -> void:
+	if body is Player:
+		return
+
+	parent_node.stop()
