@@ -18,7 +18,6 @@ config/features=PackedStringArray("4.4")
 [autoload]
 
 EventBus="*res://src/globals/event_bus.gd"
-Shaker="*res://src/globals/shaker.gd"
 
 [display]
 

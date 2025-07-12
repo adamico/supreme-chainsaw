@@ -8,7 +8,7 @@ const RED_SPRITE_MATERIAL:= preload("res://src/resources/red_sprite_material.tre
 @export var chasing_detection_range:= 200.0
 @export var chasing_speed:= 30.0
 @export var experience_reward:= 10.0
-@export var health:= 30:
+@export var health: int:
 	set(value):
 		health = value
 		if health <= 0:
@@ -24,11 +24,16 @@ var room: Room = null
 @onready var animation_player: AnimationPlayer = %AnimationPlayer
 @onready var body_sprite: Sprite2D = %Body
 @onready var hurt_box: HurtBoxComponent = %HurtBoxComponent
+@onready var damage_indicator_node: Node2D = %DmgIndicatorNode
+@onready var damage_indicator_label: Label = %DmgIndicatorLabel
+
 @onready var state_chart: StateChart = %StateChart
 @onready var sleeping_state: AtomicState = %Sleeping
 @onready var chasing_state: AtomicState = %Chasing
-@onready var damage_indicator_node: Node2D = %DmgIndicatorNode
-@onready var damage_indicator_label: Label = %DmgIndicatorLabel
+@onready var knockback_state: AtomicState = %KnockBack
+@onready var knockback_transition: Transition = %ToKnockBack
+@onready var shaker:= Shaker.new(body_sprite)
+@onready var effects_animation_player: AnimationPlayer = %EffectsAnimationPlayer
 
 
 func _ready() -> void:
@@ -38,10 +43,7 @@ func _ready() -> void:
 		print("Enemy initialized - Player reference:", player_ref)
 
 	add_to_group("enemies")
-	sleeping_state.state_entered.connect(_on_sleeping_state_entered)
-	sleeping_state.physics_state_processing.connect(_on_sleeping_physics_state_processing)
-	chasing_state.state_entered.connect(_on_chasing_state_entered)
-	chasing_state.physics_state_processing.connect(_on_chasing_physics_state_processing)
+	_connect_state_chart_events()
 
 	died.connect(_on_died)
 	hurt_box.hit_received.connect(_on_hurt_box_hit_received)
@@ -52,6 +54,15 @@ func _physics_process(_delta) -> void:
 	move_and_slide()
 
 
+func _connect_state_chart_events() -> void:
+	sleeping_state.state_entered.connect(_on_sleeping_state_entered)
+	sleeping_state.physics_state_processing.connect(_on_sleeping_physics_state_processing)
+	chasing_state.state_entered.connect(_on_chasing_state_entered)
+	chasing_state.physics_state_processing.connect(_on_chasing_physics_state_processing)
+	knockback_state.state_entered.connect(_on_knock_back_state_entered)
+	knockback_state.physics_state_processing.connect(_on_knock_back_physics_processing)
+
+
 func _on_sleeping_state_entered() -> void:
 	print("Entering sleeping state")
 	print("Distance to player= ", distance_to_player)
@@ -60,6 +71,9 @@ func _on_sleeping_state_entered() -> void:
 
 
 func _on_sleeping_physics_state_processing(_delta: float) -> void:
+	if not player_ref:
+		return
+
 	# Check if player is within detection range
 	distance_to_player = global_position.distance_to(player_ref.global_position)
 
@@ -79,11 +93,23 @@ func _on_chasing_state_entered() -> void:
 
 
 func _on_chasing_physics_state_processing(_delta: float) -> void:
+	if not player_ref:
+		state_chart.send_event("sleep")
+		return
+
 	distance_to_player = global_position.distance_to(player_ref.global_position)
 	direction = (player_ref.global_position - global_position).normalized()
 	if distance_to_player > chasing_detection_range:
 		state_chart.send_event("sleep")
 		return
+
+
+func _on_knock_back_state_entered() -> void:
+	print("Entering knockback state")
+
+
+func _on_knock_back_physics_processing(_delta: float) -> void:
+	pass
 
 
 func _drop_loot() -> void:
@@ -108,23 +134,17 @@ func _on_hurt_box_hit_received(hitbox: HitBoxComponent) -> void:
 	if health <= 0:
 		return
 
-	_flash_and_shake_tween(hitbox)
-	_dmg_indicator_tween(hitbox)
+	_apply_knock_back(hitbox)
+	shaker.shake(4.0, 0.2)
+	effects_animation_player.play("flash")
+	_dmg_indicator_tween(hitbox.damage)
+	health -= hitbox.damage
 	print("HurtBoxComponent: Hit received, new health:", health)
 
 
-func _flash_and_shake_tween(hitbox: HitBoxComponent) -> void:
-	body_sprite.material = RED_SPRITE_MATERIAL
-	var tween = create_tween()
-	tween.tween_callback(Shaker.shake.bind(self, 8, 0.15))
-	tween.tween_interval(0.15)
-	tween.finished.connect(func(): body_sprite.material = null)
-	health -= hitbox.damage
-
-
-func _dmg_indicator_tween(hitbox: HitBoxComponent) -> void:
+func _dmg_indicator_tween(received_damage: int) -> void:
 	damage_indicator_node.show()
-	damage_indicator_label.text = str(hitbox.damage)
+	damage_indicator_label.text = str(received_damage)
 	var dmg_indicator_position = damage_indicator_node.position
 	var target_position = dmg_indicator_position + Vector2(0, -8)
 	var damage_tween = create_tween()
@@ -136,3 +156,9 @@ func _dmg_indicator_tween(hitbox: HitBoxComponent) -> void:
 		damage_indicator_node.hide()
 		damage_indicator_node.position = dmg_indicator_position
 	)
+
+
+func _apply_knock_back(hitbox: HitBoxComponent) -> void:
+	direction = hitbox.get_parent().direction
+	knockback_transition.take()
+	current_speed = hitbox.knock_back

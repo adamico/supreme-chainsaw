@@ -1,6 +1,7 @@
 class_name AxeAttack extends Node2D
 
 @export var damage: int = 10
+@export var knock_back: float = 10.0
 @export var speed: float = 200.0
 
 var direction: Vector2
@@ -16,8 +17,9 @@ var player: Player
 func _ready() -> void:
 	current_speed = 0.0
 	player = get_tree().get_first_node_in_group("players")
-	hit_box_component.parent_node = player
+	hit_box_component.player = player
 	hit_box_component.damage = damage
+	hit_box_component.knock_back = knock_back
 	hit_box_component.body_entered.connect(_on_body_entered)
 	hit_box_component.hit.connect(func(_area): queue_free())
 

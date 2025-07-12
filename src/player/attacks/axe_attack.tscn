@@ -77,6 +77,7 @@ _data = {
 [node name="AxeAttack" type="Node2D" groups=["projectiles"]]
 y_sort_enabled = true
 script = ExtResource("1_wl5c8")
+knock_back = 50.0
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 unique_name_in_owner = true

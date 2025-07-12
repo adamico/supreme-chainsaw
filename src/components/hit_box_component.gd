@@ -3,19 +3,26 @@ class_name HitBoxComponent extends Area2D
 signal hit(hurtbox: HurtBoxComponent)
 
 var damage: int
-var parent_node: Node2D
+var player: Node2D
+var knock_back: float
 
 func _ready() -> void:
 	area_entered.connect(_on_area_entered)
-	_calculate_damage.call_deferred()
-
-
-func _calculate_damage() -> void:
-	if not parent_node:
+	player = get_tree().get_first_node_in_group("players")
+	if not player:
 		print("HitBoxComponent: No parent node set, cannot calculate damage.")
 		return
 
-	damage += parent_node.attack_damage if parent_node.has_method("attack_damage") else 0
+	_calculate_damage.call_deferred()
+	_calculate_knock_back_strength.call_deferred()
+
+
+func _calculate_damage() -> void:
+	damage += player.attack_damage if player.has_method("attack_damage") else 0
+
+
+func _calculate_knock_back_strength() -> void:
+	knock_back += player.knock_back_strength if player.has_method("knock_back_strength") else 0
 
 
 func _on_area_entered(area: Area2D) -> void:

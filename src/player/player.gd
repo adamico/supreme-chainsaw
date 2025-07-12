@@ -6,15 +6,10 @@ const AXE_ATTACK_SCENE = preload("res://src/player/attacks/axe_attack.tscn")
 
 signal died
 
-# Player Movement stats
-@export var speed: float = 80.0
+# Player stats
 @export var acceleration: float = 500.0
 @export var friction: float = 400.0
-@export var attack_cost:= 2.0
-@export var attack_refund_cost:= 3.0
-@export var heal_rate:= 1.0
 
-# Player stats
 @export var max_health: int:
 	set(value):
 		var current_max_health = max_health
@@ -54,6 +49,12 @@ signal died
 		attack_damage = max(value, 1)  # Ensure attack damage is at least 1
 		print("Player attack damage set to: ", attack_damage)
 		EventBus.player_attack_damage_changed.emit(attack_damage)
+
+@export var heal_rate:= 1.0
+@export var knock_back_strength:= 0.0
+@export var speed: float = 80.0
+@export var attack_cost:= 2.0
+@export var attack_refund_cost:= 3.0
 
 var _input_vector: Vector2 = Vector2.ZERO
 var _attacking_vector: Vector2 = Vector2.RIGHT

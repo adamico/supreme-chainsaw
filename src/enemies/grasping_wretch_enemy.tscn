@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://bf1wa731iextr"]
+[gd_scene load_steps=18 format=3 uid="uid://bf1wa731iextr"]
 
 [ext_resource type="Script" uid="uid://bw3wi7qs0rpyl" path="res://src/enemies/enemy.gd" id="1_6t1wc"]
 [ext_resource type="Script" uid="uid://couw105c3bde4" path="res://addons/godot_state_charts/state_chart.gd" id="2_4gwxj"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://jk2jm1g6q853" path="res://addons/godot_state_charts/compound_state.gd" id="3_72whu"]
 [ext_resource type="Script" uid="uid://cytafq8i1y8qm" path="res://addons/godot_state_charts/atomic_state.gd" id="4_bknyb"]
 [ext_resource type="Script" uid="uid://cf1nsco3w0mf6" path="res://addons/godot_state_charts/transition.gd" id="5_72whu"]
+[ext_resource type="Material" uid="uid://dgxq5dr0l7dqi" path="res://src/resources/red_sprite_material.tres" id="6_k5hss"]
 [ext_resource type="Texture2D" uid="uid://ccgh84qmwlwv" path="res://assets/roguelikeChar_transparent.png" id="7_bknyb"]
 
 [sub_resource type="Animation" id="Animation_k5hss"]
@@ -63,6 +64,44 @@ _data = {
 &"sleeping": SubResource("Animation_bknyb")
 }
 
+[sub_resource type="Animation" id="Animation_sgf45"]
+resource_name = "flash"
+length = 0.2
+step = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Marker2D/Body:material")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [ExtResource("6_k5hss"), null]
+}
+
+[sub_resource type="Animation" id="Animation_x4wml"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Marker2D/Body:material")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [null]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_x4wml"]
+_data = {
+&"RESET": SubResource("Animation_x4wml"),
+&"flash": SubResource("Animation_sgf45")
+}
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6t1wc"]
 size = Vector2(16, 8)
 
@@ -73,6 +112,7 @@ size = Vector2(16, 14)
 collision_layer = 4
 collision_mask = 5
 script = ExtResource("1_6t1wc")
+health = 999999
 
 [node name="StateChart" type="Node" parent="."]
 unique_name_in_owner = true
@@ -106,12 +146,34 @@ to = NodePath("../../Sleeping")
 event = &"sleep"
 delay_in_seconds = "0.5"
 
+[node name="ToKnockBack" type="Node" parent="StateChart/Root/Chasing"]
+unique_name_in_owner = true
+script = ExtResource("5_72whu")
+to = NodePath("../../KnockBack")
+event = &"knock_back"
+delay_in_seconds = "0.0"
+
+[node name="KnockBack" type="Node" parent="StateChart/Root"]
+unique_name_in_owner = true
+script = ExtResource("4_bknyb")
+
+[node name="ToChasing" type="Node" parent="StateChart/Root/KnockBack"]
+script = ExtResource("5_72whu")
+to = NodePath("../../Chasing")
+delay_in_seconds = "0.2"
+
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 unique_name_in_owner = true
 libraries = {
 &"": SubResource("AnimationLibrary_pvmrw")
 }
 autoplay = "chasing"
+
+[node name="EffectsAnimationPlayer" type="AnimationPlayer" parent="."]
+unique_name_in_owner = true
+libraries = {
+&"": SubResource("AnimationLibrary_x4wml")
+}
 
 [node name="DmgIndicatorNode" type="Node2D" parent="."]
 unique_name_in_owner = true
