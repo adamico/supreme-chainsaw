@@ -105,7 +105,7 @@ func _on_health_pack_collected(body: Node2D, health_pack: Node2D) -> void:
 		print("Health pack collected! Player healed.")
 		spawned_features.erase(health_pack)
 		health_pack.queue_free()
-		body.health += 20  # Heal the player by 20 health points
+		body.health += 10 * player.heal_rate
 
 
 # Override room setup for battle-specific configuration

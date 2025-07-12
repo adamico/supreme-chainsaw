@@ -37,6 +37,7 @@ func _ready() -> void:
 		player_ref = room.player
 		print("Enemy initialized - Player reference:", player_ref)
 
+	add_to_group("enemies")
 	sleeping_state.state_entered.connect(_on_sleeping_state_entered)
 	sleeping_state.physics_state_processing.connect(_on_sleeping_physics_state_processing)
 	chasing_state.state_entered.connect(_on_chasing_state_entered)

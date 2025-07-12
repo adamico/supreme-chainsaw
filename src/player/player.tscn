@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://d3iwnpjnk7a1g"]
+[gd_scene load_steps=16 format=3 uid="uid://d3iwnpjnk7a1g"]
 
 [ext_resource type="Script" uid="uid://0rrfyid6xjj6" path="res://src/player/player.gd" id="1_4flbx"]
 [ext_resource type="Script" uid="uid://couw105c3bde4" path="res://addons/godot_state_charts/state_chart.gd" id="2_244u8"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://cytafq8i1y8qm" path="res://addons/godot_state_charts/atomic_state.gd" id="4_5f2sf"]
 [ext_resource type="Script" uid="uid://cf1nsco3w0mf6" path="res://addons/godot_state_charts/transition.gd" id="6_x42xx"]
 [ext_resource type="Script" uid="uid://b4dwolbvt8our" path="res://addons/godot_state_charts/history_state.gd" id="7_x42xx"]
+[ext_resource type="Script" uid="uid://bihkcn5ihs8cn" path="res://src/components/hurt_box_component.gd" id="9_l271a"]
 
 [sub_resource type="Animation" id="Animation_mf2ua"]
 length = 0.001
@@ -230,6 +231,16 @@ region_rect = Rect2(612, 68, 16, 16)
 [node name="AttackOrigin" type="Marker2D" parent="SpritePivot"]
 unique_name_in_owner = true
 position = Vector2(-6, -2.5)
+
+[node name="HurtBoxComponent" type="Area2D" parent="SpritePivot"]
+unique_name_in_owner = true
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("9_l271a")
+metadata/_custom_type_script = "uid://bihkcn5ihs8cn"
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="SpritePivot/HurtBoxComponent"]
+polygon = PackedVector2Array(-7, -2, -7, 5, -5, 7, 5, 7, 7, 5, 7, -2, 3, -1, 3, -3, 6, -6, 5, -7, 3, -5, -3, -5, -5, -7, -6, -6, -3, -3, -3, -1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -3)

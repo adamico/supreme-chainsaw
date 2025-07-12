@@ -41,6 +41,7 @@ cards=""
 sacrifice_shrines=""
 projectiles=""
 room_manager=""
+enemies=""
 
 [gui]
 

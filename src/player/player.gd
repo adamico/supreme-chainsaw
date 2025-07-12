@@ -4,10 +4,15 @@ class_name Player extends CharacterBody2D
 
 const AXE_ATTACK_SCENE = preload("res://src/player/attacks/axe_attack.tscn")
 
+signal died
+
 # Player Movement stats
 @export var speed: float = 80.0
 @export var acceleration: float = 500.0
 @export var friction: float = 400.0
+@export var attack_cost:= 2.0
+@export var attack_refund_cost:= 3.0
+@export var heal_rate:= 1.0
 
 # Player stats
 @export var max_health: int:
@@ -23,6 +28,8 @@ const AXE_ATTACK_SCENE = preload("res://src/player/attacks/axe_attack.tscn")
 		health = clamp(value, 0, max_health)
 		print("Player health changed to: ", health)
 		EventBus.player_health_changed.emit(health, max_health)
+		if health <= 0:
+			died.emit()
 
 @export var experience: int:
 	set(value):
@@ -64,11 +71,13 @@ var _room_manager: Node2D
 @onready var interacting_state: AtomicState = %Interacting
 @onready var attacking_state: AtomicState = %Attacking
 @onready var recharging_state: AtomicState = %Recharging
+@onready var hurt_box: HurtBoxComponent = %HurtBoxComponent
 
 
 func _ready() -> void:
 	_initialize_stats()
 	_connect_state_chart_events()
+	died.connect(_on_died)
 	_room_manager = get_tree().get_first_node_in_group("room_manager")
 
 
@@ -82,8 +91,8 @@ func _physics_process(delta) -> void:
 
 
 func _initialize_stats() -> void:
-	# Initialize player stats
-	health = 100
+	max_health = 60
+	health = max_health
 	experience = 50
 	memory_shards = 1
 	attack_rate = 0.5
@@ -91,7 +100,6 @@ func _initialize_stats() -> void:
 
 
 func _connect_state_chart_events() -> void:
-	# Connect state chart events to handle state transitions
 	idling_state.state_entered.connect(_on_idling_state_entered)
 	idling_state.state_physics_processing.connect(_on_idling_state_physics_processing)
 	moving_state.state_entered.connect(_on_moving_state_entered)
@@ -136,20 +144,19 @@ func _play_animation(animation_name: String):
 			animation_player.play(animation_name)
 
 
-func _check_for_interactables() -> void:
+func _check_for_interactables() -> Array:
 	print("Checking for nearby interactable objects...")
 
 	var interactables = interaction_area.get_overlapping_areas()
 	if interactables.size() == 0:
 		print("No interactable objects nearby.")
-		return
+		return []
 	else:
-		for area in interactables:
-			print("Found interactable: ", area.name)
-			if area.has_method("interact"):
-				area.interact()
-			else:
-				print("Interactable does not have an interact method: ", area.name)
+		return interactables
+
+
+func _on_died() -> void:
+	queue_free()
 
 
 func _on_idling_state_entered() -> void:
@@ -196,8 +203,19 @@ func _on_attacking_state_entered() -> void:
 	_attack.reparent(_room_manager.current_room)
 	_attack.fire()
 
+	health -= _attack.damage / attack_cost
+
 
 func _on_interacting_state_entered() -> void:
 	animation_player.speed_scale = 1.0
 	_play_animation("interact")
-	_check_for_interactables()
+	var interactables = _check_for_interactables()
+	if interactables.size() == 0:
+		return
+
+	for area in interactables:
+		print("Found interactable: ", area.name)
+		if area.has_method("interact"):
+			area.interact(self)
+		else:
+			print("Interactable does not have an interact method: ", area.name)
